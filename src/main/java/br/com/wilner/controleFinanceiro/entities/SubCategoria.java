@@ -1,15 +1,12 @@
 package br.com.wilner.controleFinanceiro.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
 
 @Entity
 @Data
-@Table(name = "tb_sub_categorias")
+@Table(name = "tb_sub_categoria")
 public class SubCategoria {
 
 	@Id
@@ -17,5 +14,9 @@ public class SubCategoria {
 	private Long id;
 	private String nome;
 	private String descricao;
-	//private Categoria categoria;
+
+	@ManyToOne
+	@JoinColumn(name = "categoria_id")
+	@ToString.Exclude
+	private Categoria categoria;
 }

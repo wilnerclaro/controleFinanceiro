@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -21,8 +22,11 @@ public class Categoria  {
 	private LocalDateTime  dataCriacao = LocalDateTime.now();
 	private LocalDateTime  dataAtualizacao = LocalDateTime.now();
 
-	@OneToMany(mappedBy = "categoria", cascade = CascadeType.ALL)
-	private List<UsuarioCategoria> usuarioCategorias;
-	
-	
+	@ManyToMany(mappedBy = "categorias")
+	private List<Usuario> usuarios = new ArrayList<>();
+
+	@OneToMany(mappedBy = "categoria", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	private List<SubCategoria> subCategorias = new ArrayList<>();
+
+
 }

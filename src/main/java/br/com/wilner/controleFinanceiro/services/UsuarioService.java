@@ -1,7 +1,9 @@
 package br.com.wilner.controleFinanceiro.services;
 
 import br.com.wilner.controleFinanceiro.DTO.UsuarioDTO;
+import br.com.wilner.controleFinanceiro.entities.Categoria;
 import br.com.wilner.controleFinanceiro.entities.Usuario;
+import br.com.wilner.controleFinanceiro.repositories.CategoriaRepository;
 import br.com.wilner.controleFinanceiro.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,7 @@ public class UsuarioService {
 
     @Autowired
     UsuarioRepository usuarioRepository;
+    CategoriaRepository categoriaRepository;
 
     @Transactional(readOnly = true)
     public List<UsuarioDTO> findAll() {
@@ -42,7 +45,8 @@ public class UsuarioService {
            usuario.setSenha(usuarioDTO.getSenha());
            usuario.setDataCriacao(usuarioDTO.getDataCriacao());
            usuario.setDataAtualizacao(usuarioDTO.getDataAtualizacao());
-           //usuario.setUsuarioCategorias();
+
+
 
             Usuario novoUsuario = usuarioRepository.save(usuario);
             return new UsuarioDTO(novoUsuario);

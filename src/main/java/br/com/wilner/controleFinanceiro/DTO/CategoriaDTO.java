@@ -24,4 +24,6 @@ public class CategoriaDTO {
     public CategoriaDTO(Categoria entity) {
         BeanUtils.copyProperties(entity, this);
     }
-}
+
+
+    }

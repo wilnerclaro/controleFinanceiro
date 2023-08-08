@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -26,7 +27,13 @@ public class Usuario {
     @Column(name = "role")
 	private List<String> roles;
 
-	@OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
-	private List<UsuarioCategoria> usuarioCategorias;
+	@ManyToMany
+	@JoinTable(
+			name = "usuario_categoria",
+			joinColumns = @JoinColumn(name = "usuario_id"),
+			inverseJoinColumns = @JoinColumn(name = "categoria_id")
+	)
+	private List<Categoria> categorias = new ArrayList<>();
+
 
 }

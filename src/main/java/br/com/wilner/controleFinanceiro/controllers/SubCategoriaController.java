@@ -1,7 +1,6 @@
 package br.com.wilner.controleFinanceiro.controllers;
 
 import br.com.wilner.controleFinanceiro.DTO.SubCategoriaDTO;
-import br.com.wilner.controleFinanceiro.DTO.interfaces.SubCategoriaInfo;
 import br.com.wilner.controleFinanceiro.services.SubCategoriaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -48,10 +47,15 @@ public class SubCategoriaController {
 
     }
 
-    @GetMapping("/sub_categoria/{id}")
-    public ResponseEntity<SubCategoriaInfo> getSubCategoriaInfo(@PathVariable Long id) {
-        SubCategoriaDTO  subCategoriaInfo =  subCategoriaService.findSubCategoriaInfoById(id);
-        return ResponseEntity.ok((SubCategoriaInfo) subCategoriaInfo);
+    @PostMapping("/lancamentos")
+    public ResponseEntity<SubCategoriaDTO> novoLancamento (@RequestBody SubCategoriaDTO subCategoriaDTO){
+        SubCategoriaDTO novoLancamentoDTO = subCategoriaService.lancarInformacao(subCategoriaDTO);
+        String uri = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(subCategoriaDTO.getId())
+                .toUriString();
+        return ResponseEntity.created(URI.create(uri)).body(novoLancamentoDTO);
     }
+
 
 }

@@ -39,7 +39,6 @@ public class CategoriaService {
     public CategoriaDTO criarCategoria(CategoriaDTO categoriaDTO){
         Categoria categoria = new Categoria();
         categoria.setNome(categoriaDTO.getNome());
-        categoria.setTipo(categoriaDTO.getTipo());
         categoria.setDescricao(categoriaDTO.getDescricao());
 
         Categoria novaCategoria = categoriaRepository.save(categoria);

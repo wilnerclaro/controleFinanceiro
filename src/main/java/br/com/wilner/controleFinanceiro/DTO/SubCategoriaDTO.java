@@ -1,16 +1,19 @@
 package br.com.wilner.controleFinanceiro.DTO;
 
-import br.com.wilner.controleFinanceiro.DTO.interfaces.SubCategoriaInfo;
 import br.com.wilner.controleFinanceiro.entities.SubCategoria;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
 
 @Data
-public class SubCategoriaDTO implements SubCategoriaInfo{
+public class SubCategoriaDTO {
 
     private Long id;
     private String nome;
     private String descricao;
+    private Double previsto;
+    private Double realizado;
+    private String mes;
+    private String tipo; // RECEITA OU DESPESA
     private CategoriaDTO categoria;
 
     public SubCategoriaDTO(){}
@@ -20,14 +23,4 @@ public class SubCategoriaDTO implements SubCategoriaInfo{
         this.categoria = new CategoriaDTO(entity.getCategoria());
     }
 
-
-    @Override
-    public Long getCategoriaId() {
-        return null;
-    }
-
-    @Override
-    public String getCategoriaNome() {
-        return null;
-    }
 }

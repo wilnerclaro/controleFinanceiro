@@ -14,6 +14,10 @@ public class SubCategoria {
 	private Long id;
 	private String nome;
 	private String descricao;
+	private Double previsto;
+	private Double realizado;
+	private String mes;
+	private String tipo; // RECEITA OU DESPESA
 
 	@ManyToOne
 	@JoinColumn(name = "categoria_id")

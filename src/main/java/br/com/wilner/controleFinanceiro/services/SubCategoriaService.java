@@ -1,8 +1,6 @@
 package br.com.wilner.controleFinanceiro.services;
 
-import br.com.wilner.controleFinanceiro.DTO.CategoriaDTO;
 import br.com.wilner.controleFinanceiro.DTO.SubCategoriaDTO;
-import br.com.wilner.controleFinanceiro.DTO.interfaces.SubCategoriaInfo;
 import br.com.wilner.controleFinanceiro.entities.Categoria;
 import br.com.wilner.controleFinanceiro.entities.SubCategoria;
 import br.com.wilner.controleFinanceiro.repositories.CategoriaRepository;
@@ -57,29 +55,26 @@ public class SubCategoriaService {
         return new SubCategoriaDTO(novaSubCategoria);
     }
 
-    @Transactional(readOnly = true)
-    public SubCategoriaDTO findSubCategoriaInfoById(Long id) {
-        SubCategoriaInfo subCategoriaInfo = subCategoriaRepository.findSubCategoriaInfoById(id);
+    @Transactional
+    public SubCategoriaDTO lancarInformacao(SubCategoriaDTO subCategoriaDTO) {
+        SubCategoria subCategoria = new SubCategoria();
 
-        if (subCategoriaInfo == null) {
-            throw new RuntimeException("Subcategoria não encontrada");
-        }
+        subCategoria.setDescricao(subCategoriaDTO.getDescricao());
+        subCategoria.setNome(subCategoriaDTO.getNome());
+        subCategoria.setPrevisto(subCategoriaDTO.getPrevisto());
+        subCategoria.setRealizado(subCategoriaDTO.getRealizado());
+        subCategoria.setMes(subCategoriaDTO.getMes());
+        subCategoria.setTipo(subCategoriaDTO.getTipo());
 
-        return createSubCategoriaDTO(subCategoriaInfo);
+        Categoria categoria = categoriaRepository.findById(subCategoriaDTO.getCategoria().getId())
+                .orElseThrow(() -> new RuntimeException("Categoria não encontrada"));
+
+        subCategoria.setCategoria(categoria);
+
+        SubCategoria novoLancamento = subCategoriaRepository.save(subCategoria);
+
+        return  new SubCategoriaDTO(novoLancamento);
+
     }
 
-    private SubCategoriaDTO createSubCategoriaDTO(SubCategoriaInfo subCategoriaInfo) {
-        SubCategoriaDTO subCategoriaDTO = new SubCategoriaDTO();
-        subCategoriaDTO.setId(subCategoriaInfo.getId());
-        subCategoriaDTO.setNome(subCategoriaInfo.getNome());
-        subCategoriaDTO.setDescricao(subCategoriaInfo.getDescricao());
-
-        CategoriaDTO categoriaDTO = new CategoriaDTO();
-        categoriaDTO.setId(subCategoriaInfo.getCategoriaId());
-        categoriaDTO.setNome(subCategoriaInfo.getCategoriaNome());
-
-        subCategoriaDTO.setCategoria(categoriaDTO);
-
-        return subCategoriaDTO;
-    }
 }

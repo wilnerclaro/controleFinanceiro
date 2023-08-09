@@ -12,7 +12,6 @@ public class CategoriaDTO {
     private Long id;
     private String nome;
     private String descricao;
-    private Boolean tipo;
     private String cor;
     private LocalDateTime dataCriacao = LocalDateTime.now();
     private LocalDateTime  dataAtualizacao = LocalDateTime.now();

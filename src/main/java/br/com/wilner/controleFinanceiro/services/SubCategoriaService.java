@@ -16,7 +16,7 @@ import java.util.Optional;
 public class SubCategoriaService {
 
     @Autowired
-    SubCategoriaRepository subCategoriaRepository;
+    private  SubCategoriaRepository subCategoriaRepository;
 
     @Autowired
     CategoriaRepository categoriaRepository;
@@ -30,13 +30,8 @@ public class SubCategoriaService {
 
     @Transactional(readOnly = true)
     public SubCategoriaDTO findById(Long id) {
-        Optional<SubCategoria> subCategoriaOptional = subCategoriaRepository.findById(id);
-        if (subCategoriaOptional.isPresent()) {
-            SubCategoria subCategoria = subCategoriaOptional.get();
-            return new SubCategoriaDTO(subCategoria);
-        } else {
-            return null;
-        }
+        SubCategoria subCategoria = subCategoriaRepository.findById(id).get();
+        return new SubCategoriaDTO(subCategoria);
     }
 
     @Transactional

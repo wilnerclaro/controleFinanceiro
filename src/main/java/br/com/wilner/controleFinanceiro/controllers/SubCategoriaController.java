@@ -15,7 +15,7 @@ import java.util.List;
 public class SubCategoriaController {
     
     @Autowired
-    SubCategoriaService subCategoriaService;
+    private SubCategoriaService subCategoriaService;
     
     @GetMapping
     public ResponseEntity<List<SubCategoriaDTO>> findAll(){

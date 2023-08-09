@@ -1,8 +1,10 @@
 package br.com.wilner.controleFinanceiro.services;
 
 import br.com.wilner.controleFinanceiro.DTO.CategoriaDTO;
+import br.com.wilner.controleFinanceiro.DTO.SubCategoriaDTO;
 import br.com.wilner.controleFinanceiro.DTO.UsuarioDTO;
 import br.com.wilner.controleFinanceiro.entities.Categoria;
+import br.com.wilner.controleFinanceiro.entities.SubCategoria;
 import br.com.wilner.controleFinanceiro.entities.Usuario;
 import br.com.wilner.controleFinanceiro.repositories.CategoriaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +18,7 @@ import java.util.Optional;
 public class CategoriaService {
 
     @Autowired
-    CategoriaRepository categoriaRepository;
+    private CategoriaRepository categoriaRepository;
 
     @Transactional(readOnly = true)
     public List<CategoriaDTO> findAll(){
@@ -26,13 +28,8 @@ public class CategoriaService {
 
     @Transactional(readOnly = true)
     public CategoriaDTO findById(Long id){
-        Optional<Categoria> optionalCategoria = categoriaRepository.findById(id);
-        if (optionalCategoria.isPresent()) {
-            Categoria categoria = optionalCategoria.get();
-            return new CategoriaDTO(categoria);
-        }else{
-            return null;
-        }
+        Categoria categoria = categoriaRepository.findById(id).get();
+        return new CategoriaDTO(categoria);
     }
 
     @Transactional

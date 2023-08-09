@@ -16,8 +16,7 @@ import java.util.Optional;
 public class UsuarioService {
 
     @Autowired
-    UsuarioRepository usuarioRepository;
-    CategoriaRepository categoriaRepository;
+    private UsuarioRepository usuarioRepository;
 
     @Transactional(readOnly = true)
     public List<UsuarioDTO> findAll() {
@@ -27,13 +26,8 @@ public class UsuarioService {
 
     @Transactional(readOnly = true)
     public UsuarioDTO findById(Long id) {
-        Optional<Usuario> optionalUsuario = usuarioRepository.findById(id);
-        if (optionalUsuario.isPresent()) {
-            Usuario usuario = optionalUsuario.get();
-            return new UsuarioDTO(usuario);
-        }else{
-            return null;
-        }
+        Usuario usuario = usuarioRepository.findById(id).get();
+        return new UsuarioDTO(usuario);
     }
 
         @Transactional

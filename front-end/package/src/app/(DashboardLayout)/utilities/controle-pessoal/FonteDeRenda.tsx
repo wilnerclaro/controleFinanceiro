@@ -102,7 +102,7 @@ const randomRole = () => {
 
     const handleClick = () => {
       const id = randomId();
-      setRows((oldRows) => [...oldRows, { id, name: '', age: '', isNew: true }]);
+      setRows((oldRows) => [...oldRows, { id, teste: '', age: '', isNew: true }]);
       setRowModesModel((oldModel) => ({
         ...oldModel,
         [id]: { mode: GridRowModes.Edit, fieldToFocus: 'name' },
@@ -134,26 +134,34 @@ const randomRole = () => {
       setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
     };
 
-    //const handleSaveClick = (newRow: GridRowModel) => () => {
-      const handleSaveClick = (id: GridRowId, row: GridValidRowModel = {}) => () => {
-        setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
+    const handleSaveClick = (id: GridRowId, row: GridValidRowModel = {}) => () => {
+        setRowModesModel({
+          ...rowModesModel,
+          [id]: { mode: GridRowModes.View },
+        });
         const linhaEditada = [...props.row];
+        const novaLinha = [...rows];
         const rowIndex = linhaEditada.findIndex((row) => row.id === id);
-      
+        if (rowIndex === -1) {
+        } else {
           const newRow = linhaEditada[rowIndex];
           linhaEditada[rowIndex].previsto = newRow.previsto;
           getTotalPrevisto(linhaEditada);
           props.updateRows(linhaEditada);
           return linhaEditada;
-        
-    
+        }
+        return linhaEditada;
       };
-    
-    
-    
 
     const handleDeleteClick = (id: GridRowId) => () => {
-      setRows(rows.filter((row) => row.id !== id));
+      // Filtra as linhas para remover a linha com o ID correspondente
+      const updatedRows = rows.filter((row) => row.id !== id);
+      // Calcula o total previsto com base nas linhas atualizadas
+      getTotalPrevisto(updatedRows);
+      // Atualiza as linhas com o total previsto calculado
+      setRows(updatedRows);
+      // Atualiza as linhas no componente pai usando a função updateRows
+      props.updateRows(updatedRows);
     };
 
     const handleCancelClick = (id: GridRowId) => () => {
@@ -173,12 +181,19 @@ const randomRole = () => {
       setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
       const linhaEditada = [...props.row];
       const rowIndex = linhaEditada.findIndex((row) => row.id === newRow.id);
-    
+      if (rowIndex === -1) {
+        linhaEditada.push(newRow);
+        handleSaveClick(newRow.id);
+        console.log(newRow.previsto);
+        props.updateRows(linhaEditada);
+      } else{
         linhaEditada[rowIndex].previsto = newRow.previsto;
         handleSaveClick(linhaEditada[rowIndex].previsto);
+        console.log(linhaEditada[rowIndex].previsto);
         props.updateRows(row);
-      return updatedRow;
+      }
       
+      return updatedRow;
     };
 
     const handleRowModesModelChange = (newRowModesModel: GridRowModesModel) => {

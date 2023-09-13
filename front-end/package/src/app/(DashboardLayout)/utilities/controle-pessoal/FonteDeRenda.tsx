@@ -120,6 +120,7 @@ const randomRole = () => {
 
   export default function fonteDeRenda(props: FonteDeRendaProps) {
     const {row, updateRows } = props;
+    const [totalPrevisto, setTotalPrevisto] = useState(0);
     const [rows, setRows] = useState(initialRows);
     const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
 
@@ -143,6 +144,7 @@ const randomRole = () => {
         const novaLinha = [...rows];
         const rowIndex = linhaEditada.findIndex((row) => row.id === id);
         if (rowIndex === -1) {
+          return novaLinha;
         } else {
           const newRow = linhaEditada[rowIndex];
           linhaEditada[rowIndex].previsto = newRow.previsto;
@@ -150,18 +152,27 @@ const randomRole = () => {
           props.updateRows(linhaEditada);
           return linhaEditada;
         }
-        return linhaEditada;
       };
 
     const handleDeleteClick = (id: GridRowId) => () => {
       // Filtra as linhas para remover a linha com o ID correspondente
       const updatedRows = rows.filter((row) => row.id !== id);
-      // Calcula o total previsto com base nas linhas atualizadas
-      getTotalPrevisto(updatedRows);
-      // Atualiza as linhas com o total previsto calculado
+
+      // Atualize as linhas no estado local
       setRows(updatedRows);
+
+      // Filtra as linhas em props.row para remover a linha com o ID correspondente
+      const updatedPropsRow = props.row.filter((row) => row.id !== id);
+
+      // Calcula o total previsto com base nas linhas atualizadas
+      const totalPrevisto = getTotalPrevisto(updatedRows);
+
       // Atualiza as linhas no componente pai usando a função updateRows
+      handleSaveClick(totalPrevisto);
       props.updateRows(updatedRows);
+
+      // Atualize o total previsto localmente
+      setTotalPrevisto(totalPrevisto);
     };
 
     const handleCancelClick = (id: GridRowId) => () => {
@@ -182,14 +193,13 @@ const randomRole = () => {
       const linhaEditada = [...props.row];
       const rowIndex = linhaEditada.findIndex((row) => row.id === newRow.id);
       if (rowIndex === -1) {
-        linhaEditada.push(newRow);
+        const novaLinha = [...rows]
+        novaLinha.push(newRow);
         handleSaveClick(newRow.id);
-        console.log(newRow.previsto);
-        props.updateRows(linhaEditada);
+        props.updateRows(novaLinha);
       } else{
         linhaEditada[rowIndex].previsto = newRow.previsto;
         handleSaveClick(linhaEditada[rowIndex].previsto);
-        console.log(linhaEditada[rowIndex].previsto);
         props.updateRows(row);
       }
       

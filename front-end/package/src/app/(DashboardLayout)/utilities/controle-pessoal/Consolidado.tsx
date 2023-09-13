@@ -10,20 +10,26 @@ interface ConsolidadoProps {
 export function getTotalPrevisto(rows: Array<GridValidRowModel>): number {
   return rows.reduce((acc, row) => acc + (row.previsto || 0), 0);
 }
+export function getTotalRealizado(rows: Array<GridValidRowModel>): number {
+  return rows.reduce((acc, row) => acc + (row.realizado || 0), 0);
+}
 
 export default function Consolidado(props: ConsolidadoProps) {
   const { rows } = props;
-  const [total, setTotal] = useState(0);
+  const [totalPrevisto, setTotalPrevisto] = useState(0);
+  const [totalRealizado, setTotalRealizado] = useState(0);
 
   // Use useEffect para observar as mudanças em "rows"
   useEffect(() => {
-    setTotal(getTotalPrevisto(rows));
+    setTotalPrevisto(getTotalPrevisto(rows));
+    setTotalRealizado(getTotalRealizado(rows));
   }, [rows]);
 
   return (
     <div>
       <h2>Resumo Consolidado</h2>
-      <p>Total Previsto: {total}</p>
+      <p>Total Previsto: {totalPrevisto}</p>
+      <p>Total Realizado: {totalRealizado}</p>
       {/* Adicione aqui o código para criar o gráfico */}
     </div>
   );

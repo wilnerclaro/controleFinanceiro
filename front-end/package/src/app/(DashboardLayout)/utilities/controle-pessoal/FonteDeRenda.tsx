@@ -29,7 +29,7 @@ import {
 } from '@mui/x-data-grid-generator';
 import PageContainer from '../../components/container/PageContainer';
 import DashboardCard from '../../components/shared/DashboardCard';
-import Consolidado, { getTotalPrevisto } from './Consolidado';
+import Consolidado, { getTotalPrevisto, getTotalRealizado } from './Consolidado';
 import { useState } from 'react';
 const roles = ['Market', 'Finance', 'Development'];
 const randomRole = () => {
@@ -148,7 +148,9 @@ const randomRole = () => {
         } else {
           const newRow = linhaEditada[rowIndex];
           linhaEditada[rowIndex].previsto = newRow.previsto;
+          linhaEditada[rowIndex].previsto = newRow.realizado;
           getTotalPrevisto(linhaEditada);
+          getTotalRealizado(linhaEditada);
           props.updateRows(linhaEditada);
           return linhaEditada;
         }

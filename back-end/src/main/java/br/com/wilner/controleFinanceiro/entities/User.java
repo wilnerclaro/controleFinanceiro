@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "Usuarios")
@@ -30,5 +32,8 @@ public class User {
     private LocalDateTime dataCriacao;
     @Column(name = "data_atualizacao")
     private LocalDateTime dataAtualizacao;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Transaction> transactions = new ArrayList<>();
+
 
 }

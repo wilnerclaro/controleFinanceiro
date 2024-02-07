@@ -60,7 +60,7 @@ public class UserController {
         return ResponseEntity.ok(userService.updateUser(id, userDto));
     }
 
-    @Operation(summary = "Fazer um delete de um usuario", method = "PUT")
+    @Operation(summary = "Fazer um delete de um usuario", method = "DELETE")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Usuario deletado com sucesso"),
             @ApiResponse(responseCode = "500", description = "Erro ao  realizar busca dos dados")

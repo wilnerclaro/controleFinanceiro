@@ -24,16 +24,17 @@ public class Transaction {
     private BigDecimal transactionValue;
     @Column(name = "DATA_TRANSACAO")
     private LocalDateTime transactionDate;
+    @Column(name = "DATA_ATUALIZACAO")
+    private LocalDateTime updateDate;
     // todo deve ser criado ua entidade Category , para fazer a implementação da classe aqui no transaction
     // private Category category;
     @Column(name = "DESCRICAO")
     private String description;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_ID")
     private User user;
     @Column(name = "FORMA_PAGAMENTO")
-
     private String paymentMethod;
 
 }

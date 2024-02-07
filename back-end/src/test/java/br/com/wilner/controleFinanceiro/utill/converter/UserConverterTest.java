@@ -13,8 +13,7 @@ import static br.com.wilner.controleFinanceiro.builder.UserDTOBuilder.umUserDTO;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
-
-public class UserConverterTest {
+class UserConverterTest {
 
     @InjectMocks
     UserConverter userConverter;

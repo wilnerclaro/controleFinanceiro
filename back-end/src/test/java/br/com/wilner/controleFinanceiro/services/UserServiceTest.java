@@ -113,10 +113,11 @@ class UserServiceTest {
 
         when(userRepository.findById(USER_ID)).thenReturn(Optional.ofNullable(existingUser));
         when(userRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
-        when(userConverter.converterToEntityUpdate(any(), any()))
+        when(userConverter.converterToEntityUpdate(any(User.class), any(UserDTO.class)))
                 .thenAnswer(invocation -> {
-                    User userToUpdate = invocation.getArgument(0);
-                    UserDTO updatedData = invocation.getArgument(1);
+                    User userToUpdate = invocation.getArgument(0, User.class);
+                    UserDTO updatedData = invocation.getArgument(1, UserDTO.class);
+                    userToUpdate.setName(updatedData.getName());
                     return userToUpdate;
                 });
 

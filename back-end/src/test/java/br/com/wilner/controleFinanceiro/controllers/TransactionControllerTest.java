@@ -1,7 +1,8 @@
 package br.com.wilner.controleFinanceiro.controllers;
 
-import br.com.wilner.controleFinanceiro.DTO.UserDTO;
-import br.com.wilner.controleFinanceiro.services.UserService;
+import br.com.wilner.controleFinanceiro.DTO.TransactionDTO;
+import br.com.wilner.controleFinanceiro.builder.TransactionDTOBuilder;
+import br.com.wilner.controleFinanceiro.services.TransactionService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,26 +15,24 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.util.Collections;
-
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
-class UserControllerTest {
+class TransactionControllerTest {
 
     @InjectMocks
-    private UserController userController;
+    private TransactionController transactionController;
     @Mock
-    private UserService userService;
+    private TransactionService transactionService;
 
 
     private MockMvc mockMvc;
     private String json;
 
-    private UserDTO userDTO;
+    private TransactionDTO transactionDTO;
 
     private String url;
 
@@ -41,64 +40,52 @@ class UserControllerTest {
 
     @BeforeEach
     void setUp() throws JsonProcessingException {
-        mockMvc = MockMvcBuilders.standaloneSetup(userController).alwaysDo(print()).build();
-        url = "/users";
-        userDTO = UserDTO.builder().name("Novo Usuario").email("teste@teste.com").userStatus(true).build();
-        json = objectMapper.writeValueAsString(userDTO);
+        mockMvc = MockMvcBuilders.standaloneSetup(transactionController).alwaysDo(print()).build();
+        url = "/transactions";
+        transactionDTO = TransactionDTOBuilder.umTransactionDTO().agora();
+        json = objectMapper.writeValueAsString(transactionDTO);
     }
 
-    @Test
-    void deveListarTodosOsUsuariosComSucesso() throws Exception {
-
-        when(userService.getAllUsers()).thenReturn(Collections.singletonList(userDTO));
-        mockMvc.perform(get(url)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().is2xxSuccessful());
-
-        verify(userService).getAllUsers();
-        verifyNoMoreInteractions(userService);
-    }
 
     @Test
-    void deveCriarUmNovoUsuarioComSucesso() throws Exception {
+    void deveCriarUmNovaTransacaoComSucesso() throws Exception {
 
-        when(userService.saveUser(any(UserDTO.class))).thenReturn(userDTO);
+        when(transactionService.saveTransaction(any(TransactionDTO.class))).thenReturn(transactionDTO);
         mockMvc.perform(post(url + "/new")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful());
 
-        verifyNoMoreInteractions(userService);
+        verifyNoMoreInteractions(transactionService);
 
     }
 
     @Test
-    void naoDeveEnviarReqiestCasoUserDTOSejaNull() throws Exception {
+    void naoDeveCriarCasoCamposObrigatorioNull() throws Exception {
         mockMvc.perform(post(url + "/new")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError());
 
-        verifyNoMoreInteractions(userService);
+        verifyNoMoreInteractions(transactionService);
 
     }
 
     @Test
-    void deveAtualizarUmNovoUsuarioComSucesso() throws Exception {
-        Long usuerID = 1L;
-        when(userService.updateUser(eq(usuerID), any(UserDTO.class))).thenReturn(new UserDTO());
+    void deveAtualizarUmaTransacaoComSucesso() throws Exception {
+        Long transactionID = 1L;
+        when(transactionService.updateTransaction(eq(transactionID), any(TransactionDTO.class))).thenReturn(new TransactionDTO());
 
         mockMvc.perform(put(url + "/update")
-                        .param("id", usuerID.toString())
+                        .param("id", transactionID.toString())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful());
 
-        verify(userService).updateUser(eq(usuerID), any(UserDTO.class));
-        verifyNoMoreInteractions(userService);
+        verify(transactionService).updateTransaction(eq(transactionID), any(TransactionDTO.class));
+        verifyNoMoreInteractions(transactionService);
 
     }
 
@@ -110,23 +97,23 @@ class UserControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError());
 
-        verifyNoMoreInteractions(userService);
+        verifyNoMoreInteractions(transactionService);
 
     }
 
     @Test
     void deveDeletarUsuarioComSucesso() throws Exception {
-        Long usuerID = 1L;
-        doNothing().when(userService).deleteUser(eq(usuerID));
+        Long transactionID = 1L;
+        doNothing().when(transactionService).deleteTransaction(transactionID);
 
         mockMvc.perform(delete(url + "/delete")
-                        .param("id", usuerID.toString())
+                        .param("id", transactionID.toString())
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful());
 
-        verify(userService).deleteUser(eq(usuerID));
-        verifyNoMoreInteractions(userService);
+        verify(transactionService).deleteTransaction(transactionID);
+        verifyNoMoreInteractions(transactionService);
 
     }
 
@@ -137,24 +124,24 @@ class UserControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError());
 
-        verifyNoMoreInteractions(userService);
+        verifyNoMoreInteractions(transactionService);
 
     }
 
     @Test
-    void deveBuscaUmUsuarioComIDComSucesso() throws Exception {
-        Long usuerID = 1L;
-        when(userService.getUserById(eq(usuerID))).thenReturn(new UserDTO());
+    void deveBuscaUmaTransacaoComIDComSucesso() throws Exception {
+        Long transactionID = 1L;
+        when(transactionService.getTransactionById(transactionID)).thenReturn(new TransactionDTO());
 
         mockMvc.perform(get(url + "/user")
-                        .param("id", usuerID.toString())
+                        .param("id", transactionID.toString())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful());
 
-        verify(userService).getUserById(eq(usuerID));
-        verifyNoMoreInteractions(userService);
+        verify(transactionService).getTransactionById(transactionID);
+        verifyNoMoreInteractions(transactionService);
 
     }
 
@@ -167,8 +154,9 @@ class UserControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError());
 
-        verifyNoMoreInteractions(userService);
+        verifyNoMoreInteractions(transactionService);
 
     }
+
 
 }

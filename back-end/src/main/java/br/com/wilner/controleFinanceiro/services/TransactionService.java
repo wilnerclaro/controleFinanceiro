@@ -17,7 +17,6 @@ public class TransactionService {
 
     private final TransactionRepository transactionRepository;
     private final TransactionConverter transactionConverter;
-    // private final FinancialSummaryDTO financialSummaryDTO;
 
     public TransactionDTO saveTransaction(TransactionDTO transactionDTO) {
         Transaction transaction = transactionConverter.converterToEntity(transactionDTO);

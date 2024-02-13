@@ -26,8 +26,9 @@ public class Transaction {
     private LocalDateTime transactionDate;
     @Column(name = "DATA_ATUALIZACAO")
     private LocalDateTime updateDate;
-    // todo deve ser criado ua entidade Category , para fazer a implementação da classe aqui no transaction
-    // private Category category;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "categoria_id")
+    private Category category;
     @Column(name = "DESCRICAO")
     private String description;
 

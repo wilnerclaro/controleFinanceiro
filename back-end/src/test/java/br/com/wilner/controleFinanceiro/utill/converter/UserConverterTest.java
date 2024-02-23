@@ -70,7 +70,7 @@ class UserConverterTest {
 
         UserDTO userToDTO = userConverter.converterToDTO(user);
 
-        assertAll("UsuarioEntity",
+        assertAll("UsuarioDTO",
                 () -> assertEquals(userDTO.getId(), userToDTO.getId()),
                 () -> assertEquals(userDTO.getName(), userToDTO.getName()),
                 () -> assertEquals(userDTO.getEmail(), userToDTO.getEmail()),

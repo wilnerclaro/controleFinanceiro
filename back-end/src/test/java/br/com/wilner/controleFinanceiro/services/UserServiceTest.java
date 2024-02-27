@@ -5,13 +5,12 @@ import br.com.wilner.controleFinanceiro.entities.User;
 import br.com.wilner.controleFinanceiro.exception.ValidationException;
 import br.com.wilner.controleFinanceiro.repositories.UserRepository;
 import br.com.wilner.controleFinanceiro.util.converter.UserConverter;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.dao.DataAccessException;
-import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +18,8 @@ import java.util.Optional;
 
 import static br.com.wilner.controleFinanceiro.builder.UserBuilder.umUser;
 import static br.com.wilner.controleFinanceiro.builder.UserDTOBuilder.umUserDTO;
+import static br.com.wilner.controleFinanceiro.util.UserStatus.ACTIVE;
+import static br.com.wilner.controleFinanceiro.util.UserStatus.INACTIVE;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -96,13 +97,20 @@ class UserServiceTest {
     @Test
     void deveDeletarUmUsuarioComSucesso() {
         final Long USER_ID = 1L;
+        User user = umUser().comUserStatus(ACTIVE).agora();
 
+        when(userRepository.findById(USER_ID)).thenReturn(Optional.of(user));
 
-        doNothing().when(userRepository).deleteById(USER_ID);
+        doAnswer(invocation -> {
+            User savedUser = invocation.getArgument(0);
+            assertEquals(INACTIVE, savedUser.getUserStatus()); // Assumindo que INACTIVE é o status para usuários desativados
+            assertNotNull(savedUser.getDataAtualizacao()); // Verifica se a data de atualização foi definida
+            return null;
+        }).when(userRepository).save(any(User.class));
 
-        assertDoesNotThrow(() -> userService.deleteUser(USER_ID));
+        userService.deactivationService(USER_ID);
 
-        verify(userRepository, times(1)).deleteById(USER_ID);
+        verify(userRepository, times(1)).save(user); // Verifica se o usuário é salvo com o status atualizado
     }
 
     @Test
@@ -175,33 +183,16 @@ class UserServiceTest {
     @Test
     void deveLancarExceptionQuandoUsuarioNaoEncontrado() {
         User userId = umUser().comId(1L).agora();
-        doThrow(new EmptyResultDataAccessException(1)).when(userRepository).deleteById(userId.getId());
+        when(userRepository.findById(userId.getId())).thenReturn(Optional.empty());
 
-        Exception exception = assertThrows(ValidationException.class, () -> {
-            userService.deleteUser(userId.getId());
+        Exception exception = assertThrows(EntityNotFoundException.class, () -> {
+            userService.deactivationService(userId.getId());
         });
 
-        String expectedMessage = "Usuario não encontrado: " + userId.getId();
+        String expectedMessage = "Usuário não encontrado com ID: " + userId.getId();
         String actualMessage = exception.getMessage();
 
         assertEquals(expectedMessage, actualMessage);
-    }
-
-
-    @Test
-    void deveLancarRuntimeExceptionParaErroInesperado() {
-        User userId = umUser().comId(1L).agora();
-        doThrow(new DataAccessException("Erro no banco de dados") {
-        }).when(userRepository).deleteById(userId.getId());
-
-        Exception exception = assertThrows(RuntimeException.class, () -> {
-            userService.deleteUser(userId.getId());
-        });
-
-        String expectedMessage = "Erro ao deletar usuário: " + userId.getId();
-        String actualMessage = exception.getMessage();
-
-        assertTrue(actualMessage.contains(expectedMessage));
     }
 
     @Test

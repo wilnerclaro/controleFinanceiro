@@ -15,7 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
-@Tag(name = "controle-financeiro")
+@Tag(name = "user-controller")
 public class UserController {
 
     private final UserService userService;
@@ -67,7 +67,7 @@ public class UserController {
     })
     @DeleteMapping("/delete")
     public ResponseEntity<Void> deleteUser(@RequestParam Long id) {
-        userService.deleteUser(id);
+        userService.deactivationService(id);
         return ResponseEntity.accepted().build();
     }
 

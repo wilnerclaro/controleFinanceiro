@@ -117,7 +117,7 @@ class UserControllerTest {
     @Test
     void deveDeletarUsuarioComSucesso() throws Exception {
         Long usuerID = 1L;
-        doNothing().when(userService).deleteUser(eq(usuerID));
+        doNothing().when(userService).deactivationService(eq(usuerID));
 
         mockMvc.perform(delete(url + "/delete")
                         .param("id", usuerID.toString())
@@ -125,7 +125,7 @@ class UserControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful());
 
-        verify(userService).deleteUser(eq(usuerID));
+        verify(userService).deactivationService(eq(usuerID));
         verifyNoMoreInteractions(userService);
 
     }

@@ -17,10 +17,12 @@ public class TransactionService {
 
     private final TransactionRepository transactionRepository;
     private final TransactionConverter transactionConverter;
+    private final TransactionValidationService transactionValidationService;
 
     public TransactionDTO saveTransaction(TransactionDTO transactionDTO) {
         Transaction transaction = transactionConverter.converterToEntity(transactionDTO);
-        isValidTransaction(transaction);
+        transactionValidationService.isValidTransaction(transaction);
+
         try {
             Transaction savedTransaction = transactionRepository.save(transaction);
             return transactionConverter.converterToDTO(savedTransaction);
@@ -29,14 +31,6 @@ public class TransactionService {
         }
     }
 
-    private void isValidTransaction(Transaction transaction) {
-        if (transaction.getTransactionType() == null) throw new ValidationException("Tipo da transação inexistente");
-        if (transaction.getTransactionValue() == null) throw new ValidationException("Valor da transação inexistente");
-        if (transaction.getTransactionDate() == null) throw new ValidationException("Data da transação inexistente");
-        if (transaction.getPaymentMethod() == null) throw new ValidationException("Forma de pagamento inexistente");
-
-
-    }
 
     public TransactionDTO updateTransaction(Long id, TransactionDTO updateTransactionDTO) {
         try {

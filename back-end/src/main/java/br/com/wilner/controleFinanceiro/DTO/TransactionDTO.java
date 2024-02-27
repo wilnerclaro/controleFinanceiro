@@ -1,6 +1,5 @@
 package br.com.wilner.controleFinanceiro.DTO;
 
-import br.com.wilner.controleFinanceiro.entities.Category;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
@@ -19,8 +18,8 @@ public class TransactionDTO {
     private String transactionType;
     @JsonProperty(value = "VALOR_TRANSACAO")
     private BigDecimal transactionValue;
-    @JsonProperty(value = "CATEGORIA")
-    private Category category;
+    @JsonProperty(value = "ID_CATEGORIA")
+    private Long categoryId;
     @JsonProperty(value = "DESCRICAO")
     private String description;
     @JsonProperty(value = "ID_USUARIO")

@@ -4,18 +4,22 @@ import br.com.wilner.controleFinanceiro.DTO.UserDTO;
 import br.com.wilner.controleFinanceiro.entities.User;
 import br.com.wilner.controleFinanceiro.exception.ValidationException;
 import br.com.wilner.controleFinanceiro.repositories.UserRepository;
+import br.com.wilner.controleFinanceiro.services.SoftDeletes.DeactivationService;
 import br.com.wilner.controleFinanceiro.util.converter.UserConverter;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import static br.com.wilner.controleFinanceiro.util.UserStatus.INACTIVE;
 
 @Service
 @RequiredArgsConstructor
 
-public class UserService {
+public class UserService implements DeactivationService {
 
     private final UserRepository userRepository;
 
@@ -51,16 +55,6 @@ public class UserService {
         }
     }
 
-    public void deleteUser(Long id) {
-        try {
-            userRepository.deleteById(id);
-        } catch (EmptyResultDataAccessException e) {
-            throw new ValidationException("Usuario não encontrado: " + id);
-        } catch (Exception e) {
-            throw new RuntimeException("Erro ao deletar usuário: " + id, e);
-        }
-    }
-
     public UserDTO updateUser(Long id, UserDTO userDTO) {
         try {
             User userById = userRepository.findById(id).orElseThrow(() -> new ValidationException("Usuario não encontrado " + id));
@@ -74,7 +68,14 @@ public class UserService {
         }
     }
 
-
+    @Override
+    public void deactivationService(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado com ID: " + id));
+        user.setUserStatus(INACTIVE);
+        user.setDataAtualizacao(LocalDateTime.now());
+        userRepository.save(user);
+    }
 }
 
 

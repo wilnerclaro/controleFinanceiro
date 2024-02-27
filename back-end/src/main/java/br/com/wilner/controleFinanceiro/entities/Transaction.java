@@ -2,6 +2,8 @@ package br.com.wilner.controleFinanceiro.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -15,7 +17,7 @@ import java.time.LocalDateTime;
 @Builder
 public class Transaction {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
     private Long id;
     @Column(name = "TIPO_TRANSACAO")
@@ -23,8 +25,10 @@ public class Transaction {
     @Column(name = "VALOR_TRANSACAO")
     private BigDecimal transactionValue;
     @Column(name = "DATA_TRANSACAO")
+    @CreatedDate
     private LocalDateTime transactionDate;
     @Column(name = "DATA_ATUALIZACAO")
+    @LastModifiedDate
     private LocalDateTime updateDate;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "categoria_id")
@@ -37,5 +41,7 @@ public class Transaction {
     private User user;
     @Column(name = "FORMA_PAGAMENTO")
     private String paymentMethod;
+    @Column(name = "IS_ACTIVE")
+    private Boolean isActive = true;
 
 }

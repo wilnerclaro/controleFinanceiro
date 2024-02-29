@@ -4,6 +4,7 @@ import br.com.wilner.controleFinanceiro.DTO.TransactionDTO;
 import br.com.wilner.controleFinanceiro.entities.Transaction;
 import br.com.wilner.controleFinanceiro.exception.ValidationException;
 import br.com.wilner.controleFinanceiro.repositories.TransactionRepository;
+import br.com.wilner.controleFinanceiro.services.ValidationSerice.TransactionValidationService;
 import br.com.wilner.controleFinanceiro.util.converter.TransactionConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -21,7 +22,7 @@ public class TransactionService {
 
     public TransactionDTO saveTransaction(TransactionDTO transactionDTO) {
         Transaction transaction = transactionConverter.converterToEntity(transactionDTO);
-        transactionValidationService.isValidTransaction(transaction);
+        transactionValidationService.checkValidFields(transaction);
 
         try {
             Transaction savedTransaction = transactionRepository.save(transaction);

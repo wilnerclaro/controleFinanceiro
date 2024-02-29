@@ -4,6 +4,7 @@ import br.com.wilner.controleFinanceiro.DTO.TransactionDTO;
 import br.com.wilner.controleFinanceiro.entities.Transaction;
 import br.com.wilner.controleFinanceiro.exception.ValidationException;
 import br.com.wilner.controleFinanceiro.repositories.TransactionRepository;
+import br.com.wilner.controleFinanceiro.services.ValidationSerice.TransactionValidationService;
 import br.com.wilner.controleFinanceiro.util.converter.TransactionConverter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

@@ -41,7 +41,6 @@ public class Transaction {
     private User user;
     @Column(name = "FORMA_PAGAMENTO")
     private String paymentMethod;
-    @Column(name = "IS_ACTIVE")
-    private Boolean isActive = true;
+    
 
 }

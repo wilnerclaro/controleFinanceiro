@@ -1,7 +1,8 @@
-package br.com.wilner.controleFinanceiro.services;
+package br.com.wilner.controleFinanceiro.services.ValidationService;
 
 import br.com.wilner.controleFinanceiro.entities.Transaction;
 import br.com.wilner.controleFinanceiro.exception.ValidationException;
+import br.com.wilner.controleFinanceiro.services.ValidationSerice.TransactionValidationService;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -33,7 +34,7 @@ class TransactionValidationServiceTest {
 
 
         ValidationException exception = assertThrows(ValidationException.class, () ->
-                transactionValidationService.isValidTransaction(transaction));
+                transactionValidationService.checkValidFields(transaction));
 
         assertEquals(expectedMessage, exception.getMessage());
     }

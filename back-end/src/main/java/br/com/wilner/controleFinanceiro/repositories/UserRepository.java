@@ -1,9 +1,16 @@
 package br.com.wilner.controleFinanceiro.repositories;
 
 import br.com.wilner.controleFinanceiro.entities.User;
+import br.com.wilner.controleFinanceiro.util.UserStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+import java.util.Optional;
+
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
+    List<User> findByUserStatus(UserStatus userStatus);
+
+    Optional<User> findByIdAndUserStatus(Long id, UserStatus userStatus);
 }

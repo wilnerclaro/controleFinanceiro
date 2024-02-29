@@ -12,7 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,23 +36,21 @@ class UserServiceTest {
 
     @Test
     void deveListarUsuariosComSucesso() {
-        List<User> listUser = new ArrayList<>();
         User user = umUser().agora();
-        listUser.add(user);
+        List<User> listUsers = Collections.singletonList(user);
 
-        List<UserDTO> listUserDTO = new ArrayList<>();
         UserDTO userDTO = umUserDTO().agora();
-        listUserDTO.add(userDTO);
+        List<UserDTO> listUsersDTO = Collections.singletonList(userDTO);
 
 
         when(userConverter.converterToDTO(user)).thenReturn(userDTO);
-        when(userRepository.findAll()).thenReturn(listUser);
+        when(userRepository.findByUserStatus(ACTIVE)).thenReturn(listUsers);
 
         List<UserDTO> result = userService.getAllUsers();
 
-        assertEquals(listUserDTO, result);
+        assertEquals(listUsersDTO, result);
         verify(userConverter).converterToDTO(user);
-        verify(userRepository).findAll();
+        verify(userRepository).findByUserStatus(ACTIVE);
         verifyNoMoreInteractions(userConverter, userRepository);
 
 
@@ -60,18 +58,18 @@ class UserServiceTest {
 
     @Test
     void deveBuscarUmUsuarioComId() {
-        final long USER_ID = 1L;
+        final long USER_ID = 2L;
         User userById = umUser().comId(USER_ID).agora();
         UserDTO userDTOById = umUserDTO().comId(USER_ID).agora();
 
         when(userConverter.converterToDTO(userById)).thenReturn(userDTOById);
-        when(userRepository.findById(USER_ID)).thenReturn(Optional.of(userById));
+        when(userRepository.findByIdAndUserStatus(USER_ID, ACTIVE)).thenReturn(Optional.of(userById));
 
         UserDTO getUserById = userService.getUserById(USER_ID);
 
         assertEquals(userDTOById, getUserById);
         verify(userConverter).converterToDTO(userById);
-        verify(userRepository).findById(USER_ID);
+        verify(userRepository).findByIdAndUserStatus(USER_ID, ACTIVE);
         verifyNoMoreInteractions(userConverter, userRepository);
 
     }
@@ -99,27 +97,27 @@ class UserServiceTest {
         final Long USER_ID = 1L;
         User user = umUser().comUserStatus(ACTIVE).agora();
 
-        when(userRepository.findById(USER_ID)).thenReturn(Optional.of(user));
+        when(userRepository.findByIdAndUserStatus(USER_ID, ACTIVE)).thenReturn(Optional.of(user));
 
         doAnswer(invocation -> {
             User savedUser = invocation.getArgument(0);
-            assertEquals(INACTIVE, savedUser.getUserStatus()); // Assumindo que INACTIVE é o status para usuários desativados
-            assertNotNull(savedUser.getDataAtualizacao()); // Verifica se a data de atualização foi definida
+            assertEquals(INACTIVE, savedUser.getUserStatus());
+            assertNotNull(savedUser.getDataAtualizacao());
             return null;
         }).when(userRepository).save(any(User.class));
 
         userService.deactivationService(USER_ID);
 
-        verify(userRepository, times(1)).save(user); // Verifica se o usuário é salvo com o status atualizado
+        verify(userRepository, times(1)).save(user);
     }
 
     @Test
     void deveAtualizarUsuarioComSucesso() {
-        final Long USER_ID = 1L;
+        final Long USER_ID = 2L;
         User existingUser = umUser().comId(1L).comName("Novo Usuário").agora();
         UserDTO updateUserDTO = umUserDTO().comName("Novo Nome").comId(1L).agora();
 
-        when(userRepository.findById(USER_ID)).thenReturn(Optional.ofNullable(existingUser));
+        when(userRepository.findByIdAndUserStatus(USER_ID, ACTIVE)).thenReturn(Optional.ofNullable(existingUser));
         when(userRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
         when(userConverter.converterToEntityUpdate(any(User.class), any(UserDTO.class)))
                 .thenAnswer(invocation -> {
@@ -137,14 +135,14 @@ class UserServiceTest {
         assertNotNull(result);
         assertEquals(updateUserDTO.getName(), result.getName());
 
-        verify(userRepository, times(1)).findById(USER_ID);
+        verify(userRepository, times(1)).findByIdAndUserStatus(USER_ID, ACTIVE);
         verify(userRepository, times(1)).save(existingUser);
     }
 
     @Test
     void naoDeveRetornarUsarioCasoErroNoRepositorio() {
 
-        when(userRepository.findAll()).thenThrow(ValidationException.class);
+        when(userRepository.findByUserStatus(ACTIVE)).thenThrow(ValidationException.class);
 
         String message = assertThrows(ValidationException.class, () -> {
             userService.getAllUsers();
@@ -157,7 +155,7 @@ class UserServiceTest {
     void naoDeveRetornarUsarioCasoIDNaoExista() {
         final Long USUARIO_ID = 2L;
 
-        when(userRepository.findById(USUARIO_ID)).thenReturn(Optional.empty());
+        when(userRepository.findByIdAndUserStatus(USUARIO_ID, ACTIVE)).thenReturn(Optional.empty());
 
         String message = assertThrows(ValidationException.class, () -> {
             userService.getUserById(USUARIO_ID);
@@ -183,7 +181,7 @@ class UserServiceTest {
     @Test
     void deveLancarExceptionQuandoUsuarioNaoEncontrado() {
         User userId = umUser().comId(1L).agora();
-        when(userRepository.findById(userId.getId())).thenReturn(Optional.empty());
+        when(userRepository.findByIdAndUserStatus(userId.getId(), ACTIVE)).thenReturn(Optional.empty());
 
         Exception exception = assertThrows(EntityNotFoundException.class, () -> {
             userService.deactivationService(userId.getId());
@@ -201,7 +199,7 @@ class UserServiceTest {
         UserDTO userDTOMock = umUserDTO().agora();
         User userMock = umUser().agora();
 
-        when(userRepository.findById(userId)).thenReturn(Optional.of(userMock));
+        when(userRepository.findByIdAndUserStatus(userId, ACTIVE)).thenReturn(Optional.of(userMock));
         when(userConverter.converterToEntityUpdate(userMock, userDTOMock)).thenReturn(userMock);
         when(userRepository.save(userMock)).thenThrow(new RuntimeException("Erro no banco de dados"));
 
@@ -220,7 +218,7 @@ class UserServiceTest {
         Long userId = 1L;
         UserDTO userDTOMock = umUserDTO().agora();
 
-        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+        when(userRepository.findByIdAndUserStatus(userId, ACTIVE)).thenReturn(Optional.empty());
 
         Exception exception = assertThrows(ValidationException.class, () -> {
             userService.updateUser(userId, userDTOMock);

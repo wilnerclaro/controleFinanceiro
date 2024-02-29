@@ -5,6 +5,7 @@ import br.com.wilner.controleFinanceiro.entities.User;
 import br.com.wilner.controleFinanceiro.exception.ValidationException;
 import br.com.wilner.controleFinanceiro.repositories.UserRepository;
 import br.com.wilner.controleFinanceiro.services.SoftDeletes.DeactivationService;
+import br.com.wilner.controleFinanceiro.util.UserStatus;
 import br.com.wilner.controleFinanceiro.util.converter.UserConverter;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +29,7 @@ public class UserService implements DeactivationService {
     public List<UserDTO> getAllUsers() {
         List<User> users = new ArrayList<>();
         try {
-            users = userRepository.findAll();
+            users = userRepository.findByUserStatus(UserStatus.ACTIVE);
             return users.stream()
                     .map(userConverter::converterToDTO)
                     .toList();
@@ -40,7 +41,7 @@ public class UserService implements DeactivationService {
 
     public UserDTO getUserById(Long id) {
 
-        User userId = userRepository.findById(id)
+        User userId = userRepository.findByIdAndUserStatus(id, UserStatus.ACTIVE)
                 .orElseThrow(() -> new ValidationException("Usuario não encontrado " + id));
         return userConverter.converterToDTO(userId);
     }
@@ -57,7 +58,7 @@ public class UserService implements DeactivationService {
 
     public UserDTO updateUser(Long id, UserDTO userDTO) {
         try {
-            User userById = userRepository.findById(id).orElseThrow(() -> new ValidationException("Usuario não encontrado " + id));
+            User userById = userRepository.findByIdAndUserStatus(id, UserStatus.ACTIVE).orElseThrow(() -> new ValidationException("Usuario não encontrado " + id));
             userById = userConverter.converterToEntityUpdate(userById, userDTO);
             return userConverter.converterToDTO(userRepository.save(userById));
 
@@ -70,7 +71,7 @@ public class UserService implements DeactivationService {
 
     @Override
     public void deactivationService(Long id) {
-        User user = userRepository.findById(id)
+        User user = userRepository.findByIdAndUserStatus(id, UserStatus.ACTIVE)
                 .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado com ID: " + id));
         user.setUserStatus(INACTIVE);
         user.setDataAtualizacao(LocalDateTime.now());

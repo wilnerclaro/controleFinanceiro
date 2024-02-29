@@ -18,6 +18,7 @@ import java.util.Optional;
 import static br.com.wilner.controleFinanceiro.builder.TransactionBuilder.umTransaction;
 import static br.com.wilner.controleFinanceiro.builder.TransactionDTOBuilder.umTransactionDTO;
 import static br.com.wilner.controleFinanceiro.builder.UserBuilder.umUser;
+import static br.com.wilner.controleFinanceiro.util.UserStatus.ACTIVE;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
@@ -43,8 +44,9 @@ class TransactionConverterTest {
     @Test
     void deveConverterParaTransactionEntityComSucesso() {
 
-        User userBuilder = umUser().agora();
-        when(userRepository.findById(userBuilder.getId())).thenReturn(Optional.of(userBuilder));
+        User userBuilder = umUser().comId(1L).agora();
+        TransactionDTO transactionDTO = umTransactionDTO().comUserId(userBuilder.getId()).agora();
+        when(userRepository.findByIdAndUserStatus(userBuilder.getId(), ACTIVE)).thenReturn(Optional.of(userBuilder));
 
         Transaction transactionToEntity = transactionConverter.converterToEntity(transactionDTO);
 
@@ -54,7 +56,7 @@ class TransactionConverterTest {
                 () -> assertEquals(transaction.getTransactionValue(), transactionToEntity.getTransactionValue()),
                 () -> assertEquals(transaction.getTransactionDate().truncatedTo(ChronoUnit.MINUTES), transactionToEntity.getTransactionDate().truncatedTo(ChronoUnit.MINUTES)),
                 () -> assertEquals(transaction.getDescription(), transactionToEntity.getDescription()),
-                () -> assertEquals(transaction.getUser(), transactionToEntity.getUser()),
+                () -> assertEquals(transaction.getUser().getId(), transactionToEntity.getUser().getId()),
                 () -> assertEquals(transaction.getPaymentMethod(), transactionToEntity.getPaymentMethod())
 
         );
@@ -71,7 +73,7 @@ class TransactionConverterTest {
         transaction = umTransaction().comTransactionType("outro nome").agora();
         User userBuilder = umUser().agora();
 
-        when(userRepository.findById(userBuilder.getId())).thenReturn(Optional.of(userBuilder));
+        when(userRepository.findByIdAndUserStatus(userBuilder.getId(), ACTIVE)).thenReturn(Optional.of(userBuilder));
 
         Transaction transactionToEntityUpdate = transactionConverter.converterToEntityUpdate(transaction, transactionDTO);
 
@@ -80,7 +82,7 @@ class TransactionConverterTest {
                 () -> assertEquals(transactionEsperado.getTransactionType(), transactionToEntityUpdate.getTransactionType()),
                 () -> assertEquals(transactionEsperado.getTransactionValue(), transactionToEntityUpdate.getTransactionValue()),
                 () -> assertEquals(transactionEsperado.getDescription(), transactionToEntityUpdate.getDescription()),
-                () -> assertEquals(transactionEsperado.getUser(), transactionToEntityUpdate.getUser()),
+                () -> assertEquals(transactionEsperado.getUser().getId(), transactionToEntityUpdate.getUser().getId()),
                 () -> assertEquals(transactionEsperado.getPaymentMethod(), transactionToEntityUpdate.getPaymentMethod())
 
 

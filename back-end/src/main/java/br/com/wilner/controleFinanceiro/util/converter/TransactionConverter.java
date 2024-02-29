@@ -8,6 +8,8 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
+import static br.com.wilner.controleFinanceiro.util.UserStatus.ACTIVE;
+
 @Component
 public class TransactionConverter {
 
@@ -57,7 +59,7 @@ public class TransactionConverter {
     }
 
     private User findUser(TransactionDTO dto) {
-        return userRepository.findById(dto.getUserId())
+        return userRepository.findByIdAndUserStatus(dto.getUserId(), ACTIVE)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado: " + dto.getUserId()));
     }
 }

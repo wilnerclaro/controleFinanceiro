@@ -15,6 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Builder
 @AllArgsConstructor
+@EqualsAndHashCode
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

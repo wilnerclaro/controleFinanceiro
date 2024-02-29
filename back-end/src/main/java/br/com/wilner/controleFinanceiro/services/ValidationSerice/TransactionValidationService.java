@@ -1,12 +1,15 @@
-package br.com.wilner.controleFinanceiro.services;
+package br.com.wilner.controleFinanceiro.services.ValidationSerice;
 
 import br.com.wilner.controleFinanceiro.entities.Transaction;
 import br.com.wilner.controleFinanceiro.exception.ValidationException;
 import org.springframework.stereotype.Component;
 
 @Component
-public class TransactionValidationService {
-    public void isValidTransaction(Transaction transaction) {
+public class TransactionValidationService implements ValidateMandatoryFields<Transaction> {
+
+
+    @Override
+    public void checkValidFields(Transaction transaction) {
         if (transaction.getTransactionType().isEmpty())
             throw new ValidationException("Tipo da transação inexistente");
         if (transaction.getTransactionValue() == null)

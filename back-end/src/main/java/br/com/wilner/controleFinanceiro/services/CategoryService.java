@@ -45,5 +45,12 @@ public class CategoryService {
         }
     }
 
+    public CategoryDTO getCategoryByName(String name) {
+        Category categoryName = categoryRepository.findByNameIgnoreCase(name)
+                .orElseThrow(() -> new ValidationException("Categoria não encontrada " + name));
+        return categoryConverter.converterToDTO(categoryName);
+
+    }
+
 
 }

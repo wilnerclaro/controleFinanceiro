@@ -38,4 +38,14 @@ public class CategoryController {
     public ResponseEntity<List<CategoryDTO>> findAllCategories() {
         return ResponseEntity.ok(categoryService.getAllCategories());
     }
+
+    @Operation(summary = "Busca Categoria Por Nome", method = "GET")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Busca realizada com sucesso"),
+            @ApiResponse(responseCode = "500", description = "Erro ao  realizar busca dos dados")
+    })
+    @GetMapping("/category")
+    public ResponseEntity<CategoryDTO> findCategoryByName(@RequestParam String name) {
+        return ResponseEntity.ok(categoryService.getCategoryByName(name));
+    }
 }

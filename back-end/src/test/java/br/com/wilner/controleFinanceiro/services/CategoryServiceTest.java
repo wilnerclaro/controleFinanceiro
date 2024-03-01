@@ -6,7 +6,6 @@ import br.com.wilner.controleFinanceiro.exception.ValidationException;
 import br.com.wilner.controleFinanceiro.repositories.CategoryRepository;
 import br.com.wilner.controleFinanceiro.services.ValidationSerice.CategoryValidationService;
 import br.com.wilner.controleFinanceiro.util.converter.CategoryConverter;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -15,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static br.com.wilner.controleFinanceiro.builder.CategoryBuilder.umCategory;
 import static br.com.wilner.controleFinanceiro.builder.CategoryDTOBuilder.umCategoryDTO;
@@ -37,10 +37,6 @@ class CategoryServiceTest {
     @Mock
     CategoryValidationService categoryValidationService;
 
-    @BeforeEach
-    void setup() {
-
-    }
 
     @Test
     void deveCriarUmaCategoriaComSucesso() {
@@ -107,5 +103,32 @@ class CategoryServiceTest {
         });
 
         assertEquals("Erro ao listar categorias ", ex.getMessage());
+    }
+
+    @Test
+    void deveBuscarCategoriaPorNomeComsucesso() {
+        CategoryDTO mockCategoryDTO = umCategoryDTO().agora();
+        Category mockCategory = umCategory().agora();
+
+        when(categoryConverter.converterToDTO(mockCategory)).thenReturn(mockCategoryDTO);
+        when(categoryRepository.findByNameIgnoreCase(mockCategory.getName())).thenReturn(Optional.of(mockCategory));
+
+        CategoryDTO getCategoryByName = categoryService.getCategoryByName(mockCategory.getName());
+
+        assertEquals(mockCategoryDTO, getCategoryByName);
+        verify(categoryConverter).converterToDTO(mockCategory);
+        verify(categoryRepository).findByNameIgnoreCase(mockCategory.getName());
+        verifyNoMoreInteractions(categoryConverter, categoryRepository);
+    }
+
+    @Test
+    void deveLancarValidationExceptionQuandoNomeDaCategoriaNaoEncontrado() {
+        Category mockCategory = umCategory().agora();
+        when(categoryRepository.findByNameIgnoreCase(mockCategory.getName())).thenReturn(Optional.empty());
+
+        ValidationException exception = assertThrows(ValidationException.class,
+                () -> categoryService.getCategoryByName(mockCategory.getName()));
+
+        assertEquals("Categoria não encontrada " + mockCategory.getName(), exception.getMessage());
     }
 }

@@ -75,4 +75,31 @@ class CategoryControllerTest {
         verify(categoryService).getAllCategories();
         verifyNoMoreInteractions(categoryService);
     }
+
+    @Test
+    void deveBuscarUmaCategoriaPorNome() throws Exception {
+        CategoryDTO categoryByname = umCategoryDTO().comCategoryName("teste").agora();
+        when(categoryService.getCategoryByName(categoryByname.getCategoryName())).thenReturn(categoryDTO);
+        mockMvc.perform(get(url + "/category")
+                        .param("name", categoryByname.getCategoryName())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful());
+
+        verify(categoryService).getCategoryByName(categoryByname.getCategoryName());
+        verifyNoMoreInteractions(categoryService);
+
+    }
+
+    @Test
+    void naoDeveBuscarUmaCategoriaPorNomeNull() throws Exception {
+        mockMvc.perform(get(url + "/category")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError());
+
+        verifyNoMoreInteractions(categoryService);
+    }
 }

@@ -13,6 +13,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Collections;
+import java.util.List;
+
 import static br.com.wilner.controleFinanceiro.builder.CategoryBuilder.umCategory;
 import static br.com.wilner.controleFinanceiro.builder.CategoryDTOBuilder.umCategoryDTO;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -22,7 +25,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class CategoryServiceTest {
+class CategoryServiceTest {
 
     @InjectMocks
     CategoryService categoryService;
@@ -72,5 +75,37 @@ public class CategoryServiceTest {
         });
 
         assertEquals("Erro ao Salvar Categoria", ex.getMessage());
+    }
+
+    @Test
+    void deveListarTodasAsCategoriasComsucesso() {
+        CategoryDTO mockCategoryDTO = umCategoryDTO().agora();
+        List<CategoryDTO> mockCategoriesDTO = Collections.singletonList(mockCategoryDTO);
+
+        Category mockCategory = umCategory().agora();
+        List<Category> mockCategories = Collections.singletonList(mockCategory);
+
+        when(categoryConverter.converterToDTO(mockCategory)).thenReturn(mockCategoryDTO);
+        when(categoryRepository.findByIsActive(true)).thenReturn(mockCategories);
+
+        List<CategoryDTO> result = categoryService.getAllCategories();
+
+        assertEquals(mockCategoriesDTO, result);
+        verify(categoryConverter).converterToDTO(mockCategory);
+        verify(categoryRepository).findByIsActive(true);
+        verifyNoMoreInteractions(categoryConverter, categoryRepository);
+
+
+    }
+
+    @Test
+    void deveLancarExceptionCasoNaoConsigaListarAsCategorias() {
+        when(categoryRepository.findByIsActive(true)).thenThrow(new ValidationException("Erro ao listar categorias "));
+
+        ValidationException ex = assertThrows(ValidationException.class, () -> {
+            categoryService.getAllCategories();
+        });
+
+        assertEquals("Erro ao listar categorias ", ex.getMessage());
     }
 }

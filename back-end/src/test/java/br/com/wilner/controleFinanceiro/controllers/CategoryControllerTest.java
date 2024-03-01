@@ -14,17 +14,18 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.util.Collections;
+
 import static br.com.wilner.controleFinanceiro.builder.CategoryDTOBuilder.umCategoryDTO;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
-
-public class CategoryControllerTest {
+class CategoryControllerTest {
 
     @InjectMocks
     private CategoryController categoryController;
@@ -60,5 +61,18 @@ public class CategoryControllerTest {
 
         verifyNoMoreInteractions(categoryService);
 
+    }
+
+    @Test
+    void deveListarTodosOsUsuariosComSucesso() throws Exception {
+
+        when(categoryService.getAllCategories()).thenReturn(Collections.singletonList(categoryDTO));
+        mockMvc.perform(get(url)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful());
+
+        verify(categoryService).getAllCategories();
+        verifyNoMoreInteractions(categoryService);
     }
 }

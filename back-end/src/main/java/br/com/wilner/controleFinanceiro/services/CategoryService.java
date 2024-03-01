@@ -9,6 +9,9 @@ import br.com.wilner.controleFinanceiro.util.converter.CategoryConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class CategoryService {
@@ -26,6 +29,19 @@ public class CategoryService {
             return categoryConverter.converterToDTO(savedCategory);
         } catch (Exception e) {
             throw new ValidationException("Erro ao Salvar Categoria");
+        }
+    }
+
+    public List<CategoryDTO> getAllCategories() {
+        List<Category> categories = new ArrayList<>();
+        try {
+            categories = categoryRepository.findByIsActive(true);
+            return categories.stream()
+                    .map(categoryConverter::converterToDTO)
+                    .toList();
+
+        } catch (Exception e) {
+            throw new ValidationException("Erro ao listar categorias ");
         }
     }
 

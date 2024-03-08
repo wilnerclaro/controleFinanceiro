@@ -48,4 +48,17 @@ public class CategoryController {
     public ResponseEntity<CategoryDTO> findCategoryByName(@RequestParam String name) {
         return ResponseEntity.ok(categoryService.getCategoryByName(name));
     }
+
+    @Operation(summary = "Fazer um delete de uma Categoria", method = "DELETE")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Categoria deletada com sucesso"),
+            @ApiResponse(responseCode = "500", description = "Erro ao  realizar busca dos dados")
+    })
+    @DeleteMapping("/delete")
+    public ResponseEntity<CategoryDTO> deleteCategory(@RequestParam String name) {
+        categoryService.deactivationService(name);
+        return ResponseEntity.accepted().build();
+    }
 }
+
+

@@ -4,17 +4,20 @@ import br.com.wilner.controleFinanceiro.DTO.CategoryDTO;
 import br.com.wilner.controleFinanceiro.entities.Category;
 import br.com.wilner.controleFinanceiro.exception.ValidationException;
 import br.com.wilner.controleFinanceiro.repositories.CategoryRepository;
+import br.com.wilner.controleFinanceiro.services.SoftDeletes.DeactivationService;
 import br.com.wilner.controleFinanceiro.services.ValidationSerice.CategoryValidationService;
 import br.com.wilner.controleFinanceiro.util.converter.CategoryConverter;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class CategoryService {
+public class CategoryService implements DeactivationService {
 
     private final CategoryRepository categoryRepository;
     private final CategoryConverter categoryConverter;
@@ -46,11 +49,19 @@ public class CategoryService {
     }
 
     public CategoryDTO getCategoryByName(String name) {
-        Category categoryName = categoryRepository.findByNameIgnoreCase(name)
+        Category categoryName = categoryRepository.findByNameAndIsActive(name, true)
                 .orElseThrow(() -> new ValidationException("Categoria não encontrada " + name));
         return categoryConverter.converterToDTO(categoryName);
 
     }
 
 
+    @Override
+    public void deactivationService(String name) {
+        Category category = categoryRepository.findByNameAndIsActive(name, true)
+                .orElseThrow(() -> new EntityNotFoundException("Categoria não encontrada "));
+        category.setIsActive(false);
+        category.setUpdateDate(LocalDateTime.now());
+        categoryRepository.save(category);
+    }
 }

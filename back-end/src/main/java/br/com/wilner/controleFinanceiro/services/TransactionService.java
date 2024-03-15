@@ -10,7 +10,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -63,6 +66,30 @@ public class TransactionService {
 
     public List<TransactionDTO> getTransactionsByUserId(Long userId) {
         List<Transaction> transactions = transactionRepository.findByUserId(userId);
+        if (transactions.isEmpty()) {
+            throw new ValidationException("Não existem transações para este usuário! ");
+        }
+        return transactions.stream()
+                .map(transactionConverter::converterToDTO)
+                .toList();
+    }
+
+    public List<TransactionDTO> getTransactionsByCategoryAndDate(String categoryName, LocalDate startDate, LocalDate endDate) {
+        LocalDateTime startOfDay = startDate.atStartOfDay(); // Início do dia para a data inicial
+        LocalDateTime endOfDay = endDate.atTime(23, 59, 59); // Fim do dia para a data final
+
+        List<Transaction> transactions = transactionRepository.findByCategoryNameAndTransactionDateBetween(categoryName, startOfDay, endOfDay);
+        if (transactions.isEmpty()) {
+            throw new ValidationException("Não existem transações para a categoria e período especificados!");
+        }
+        return transactions.stream()
+                .map(transactionConverter::converterToDTO)
+                .collect(Collectors.toList());
+    }
+
+
+    public List<TransactionDTO> getTransactionsByUserName(String userName) {
+        List<Transaction> transactions = transactionRepository.findByUserName(userName);
         if (transactions.isEmpty()) {
             throw new ValidationException("Não existem transações para este usuário! ");
         }

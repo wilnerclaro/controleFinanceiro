@@ -20,16 +20,11 @@ public class UserDTOBuilder {
         UserDTO elemento = builder.elemento;
 
 
-        elemento.setId(1L);
         elemento.setName("Novo Usuário");
         elemento.setEmail("teste@email.com");
         elemento.setUserStatus(true);
     }
 
-    public UserDTOBuilder comId(Long param) {
-        elemento.setId(param);
-        return this;
-    }
 
     public UserDTOBuilder comName(String param) {
         elemento.setName(param);

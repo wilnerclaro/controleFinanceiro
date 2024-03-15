@@ -9,8 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class CategoryDTO {
-    @JsonProperty(value = "ID_CATEGORIA")
-    private Long categoryId;
+    
     @JsonProperty(value = "NOME_CATEGORIA")
     private String categoryName;
     @JsonProperty(value = "DESCRICAO_CATEGORIA")

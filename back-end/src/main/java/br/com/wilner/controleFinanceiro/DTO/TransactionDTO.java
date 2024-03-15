@@ -12,18 +12,22 @@ import java.math.BigDecimal;
 @Builder
 public class TransactionDTO {
 
-    @JsonProperty(value = "ID")
-    private Long id;
+
     @JsonProperty(value = "TIPO_TRANSACAO")
     private String transactionType;
     @JsonProperty(value = "VALOR_TRANSACAO")
     private BigDecimal transactionValue;
-    @JsonProperty(value = "ID_CATEGORIA")
-    private Long categoryId;
+    @JsonProperty(value = "NOME_CATEGORIA")
+    private String categoryName;
     @JsonProperty(value = "DESCRICAO")
     private String description;
-    @JsonProperty(value = "ID_USUARIO")
-    private Long userId;
+    @JsonProperty(value = "USER_NAME")
+    private String userName;
     @JsonProperty(value = "FORMA_PAGAMENTO")
     private String paymentMethod;
+    @JsonProperty(value = "VALOR_PREVISTO")
+    private BigDecimal transactionValueExpected;
+    @JsonProperty(value = "VALOR_REALIZADO")
+    private BigDecimal transactionValueRealized;
+
 }

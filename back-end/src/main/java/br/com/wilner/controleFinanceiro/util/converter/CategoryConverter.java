@@ -11,7 +11,6 @@ public class CategoryConverter {
 
     public Category converterToEntity(CategoryDTO categoryDTO) {
         return Category.builder()
-                .id(categoryDTO.getCategoryId())
                 .name(categoryDTO.getCategoryName())
                 .creationDate(LocalDateTime.now())
                 .isActive(true)

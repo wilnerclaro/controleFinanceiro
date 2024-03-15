@@ -14,6 +14,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -76,8 +79,8 @@ class TransactionServiceTest {
 
     @Test
     void deveAtualizarUmaTransacaoComsucesso() {
-        Transaction existTransaction = umTransaction().comId(1L).comTransactionType("Despesa").comDescription("Cerveja").agora();
-        TransactionDTO updateTransactionDTO = umTransactionDTO().comId(1L).comTransactionType("Receita").comDescription("Aluguel").agora();
+        Transaction existTransaction = umTransaction().comTransactionType("Despesa").comDescription("Cerveja").agora();
+        TransactionDTO updateTransactionDTO = umTransactionDTO().comTransactionType("Receita").comDescription("Aluguel").agora();
 
         when(transactionRepository.findById(existTransaction.getId())).thenReturn(Optional.ofNullable(existTransaction));
         when(transactionRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
@@ -237,6 +240,73 @@ class TransactionServiceTest {
 
         assertEquals("Não existem transações para este usuário! ", exception.getMessage());
         verify(transactionRepository).findByUserId(userId);
+    }
+
+    @Test
+    void deveRetornarUmaTransacaoComDataECategoria() {
+        String categoryName = "Despesas";
+        LocalDate startDate = LocalDate.of(2022, Month.JANUARY, 1);
+        LocalDate endDate = LocalDate.of(2022, Month.JANUARY, 31);
+        List<Transaction> mockTransactions = List.of(new Transaction()); // Substitua pelo construtor real
+        List<TransactionDTO> expectedDTOs = List.of(new TransactionDTO()); // Substitua pelo construtor real
+
+        when(transactionRepository.findByCategoryNameAndTransactionDateBetween(eq(categoryName), any(LocalDateTime.class), any(LocalDateTime.class)))
+                .thenReturn(mockTransactions);
+        when(transactionConverter.converterToDTO(any(Transaction.class)))
+                .thenReturn(expectedDTOs.get(0));
+
+        List<TransactionDTO> result = transactionService.getTransactionsByCategoryAndDate(categoryName, startDate, endDate);
+
+        assertEquals(expectedDTOs.size(), result.size());
+        verify(transactionRepository, times(1)).findByCategoryNameAndTransactionDateBetween(eq(categoryName), any(LocalDateTime.class), any(LocalDateTime.class));
+        verify(transactionConverter, times(mockTransactions.size())).converterToDTO(any(Transaction.class));
+    }
+
+    @Test
+    void deveBuscarUmaTransacaoComNomeComSucesso() {
+        String userName = "UsuarioTeste";
+        List<Transaction> mockTransactions = List.of(new Transaction()); // Substitua pelo construtor real
+        List<TransactionDTO> expectedDTOs = List.of(new TransactionDTO()); // Substitua pelo construtor real
+
+        when(transactionRepository.findByUserName(userName)).thenReturn(mockTransactions);
+        when(transactionConverter.converterToDTO(any(Transaction.class))).thenReturn(expectedDTOs.get(0));
+
+        List<TransactionDTO> result = transactionService.getTransactionsByUserName(userName);
+
+        assertEquals(expectedDTOs.size(), result.size());
+        verify(transactionRepository, times(1)).findByUserName(userName);
+        verify(transactionConverter, times(mockTransactions.size())).converterToDTO(any(Transaction.class));
+    }
+
+    @Test
+    void shouldThrowValidationExceptionWhenNoTransactionsFoundByCategoryAndDate() {
+        String categoryName = "Despesas";
+        LocalDate startDate = LocalDate.of(2022, Month.JANUARY, 1);
+        LocalDate endDate = LocalDate.of(2022, Month.JANUARY, 31);
+
+        when(transactionRepository.findByCategoryNameAndTransactionDateBetween(eq(categoryName), any(LocalDateTime.class), any(LocalDateTime.class)))
+                .thenReturn(Collections.emptyList()); // Retorna uma lista vazia para simular "nenhuma transação encontrada"
+
+        ValidationException exception = assertThrows(ValidationException.class, () ->
+                        transactionService.getTransactionsByCategoryAndDate(categoryName, startDate, endDate),
+                "Esperava que ValidationException fosse lançada"
+        );
+
+        assertEquals("Não existem transações para a categoria e período especificados!", exception.getMessage());
+    }
+
+    @Test
+    void shouldThrowValidationExceptionWhenNoTransactionsFoundByUserName() {
+        String userName = "UsuarioTeste";
+
+        when(transactionRepository.findByUserName(userName)).thenReturn(Collections.emptyList()); // Retorna uma lista vazia para simular "nenhuma transação encontrada"
+
+        ValidationException exception = assertThrows(ValidationException.class, () ->
+                        transactionService.getTransactionsByUserName(userName),
+                "Esperava que ValidationException fosse lançada"
+        );
+
+        assertEquals("Não existem transações para este usuário! ", exception.getMessage());
     }
 
 

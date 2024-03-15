@@ -30,14 +30,14 @@ public class UserController {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
-    @Operation(summary = "Busca Usuario Por Id", method = "GET")
+    @Operation(summary = "Busca Usuario Por Nome", method = "GET")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Busca realizada com sucesso"),
             @ApiResponse(responseCode = "500", description = "Erro ao  realizar busca dos dados")
     })
     @GetMapping("/user")
-    public ResponseEntity<UserDTO> getUserById(@RequestParam Long id) {
-        return ResponseEntity.ok(userService.getUserById(id));
+    public ResponseEntity<UserDTO> getUserById(@RequestParam String name) {
+        return ResponseEntity.ok(userService.getUserByName(name));
     }
 
     @Operation(summary = "Cria um novo usuario", method = "POST")
@@ -56,8 +56,8 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "Erro ao  realizar busca dos dados")
     })
     @PutMapping("/update")
-    public ResponseEntity<UserDTO> updateUser(@RequestParam Long id, @RequestBody UserDTO userDto) {
-        return ResponseEntity.ok(userService.updateUser(id, userDto));
+    public ResponseEntity<UserDTO> updateUser(@RequestParam String name, @RequestBody UserDTO userDto) {
+        return ResponseEntity.ok(userService.updateUser(name, userDto));
     }
 
     @Operation(summary = "Fazer um delete de um usuario", method = "DELETE")
@@ -66,8 +66,8 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "Erro ao  realizar busca dos dados")
     })
     @DeleteMapping("/delete")
-    public ResponseEntity<Void> deleteUser(@RequestParam Long id) {
-        userService.deactivationService(id);
+    public ResponseEntity<Void> deleteUser(@RequestParam String name) {
+        userService.deactivationService(name);
         return ResponseEntity.accepted().build();
     }
 

@@ -15,6 +15,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.time.LocalDate;
+import java.util.Collections;
+
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -23,20 +26,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(MockitoExtension.class)
 class TransactionControllerTest {
 
+    private final ObjectMapper objectMapper = new ObjectMapper();
     @InjectMocks
     private TransactionController transactionController;
     @Mock
     private TransactionService transactionService;
-
-
     private MockMvc mockMvc;
     private String json;
-
     private TransactionDTO transactionDTO;
-
     private String url;
-
-    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @BeforeEach
     void setUp() throws JsonProcessingException {
@@ -129,18 +127,17 @@ class TransactionControllerTest {
     }
 
     @Test
-    void deveBuscaUmaTransacaoComIDComSucesso() throws Exception {
-        Long transactionID = 1L;
-        when(transactionService.getTransactionById(transactionID)).thenReturn(new TransactionDTO());
+    void deveBuscaUmaTransacaoComNomeComSucesso() throws Exception {
+        String transactionName = "Teste";
+        when(transactionService.getTransactionsByUserName(transactionName)).thenReturn(Collections.singletonList(transactionDTO));
 
-        mockMvc.perform(get(url + "/user")
-                        .param("id", transactionID.toString())
+        mockMvc.perform(get(url + "/users")
+                        .param("name", transactionName)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(json)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful());
 
-        verify(transactionService).getTransactionById(transactionID);
+        verify(transactionService).getTransactionsByUserName(transactionName);
         verifyNoMoreInteractions(transactionService);
 
     }
@@ -156,6 +153,28 @@ class TransactionControllerTest {
 
         verifyNoMoreInteractions(transactionService);
 
+    }
+
+    @Test
+    void shouldGetTransactionsByCategoryAndDateSuccessfully() throws Exception {
+        String categoryName = "Lazer";
+        String startDate = "2022-01-01";
+        String endDate = "2022-01-31";
+
+        when(transactionService.getTransactionsByCategoryAndDate(categoryName, LocalDate.parse(startDate), LocalDate.parse(endDate)))
+                .thenReturn(Collections.singletonList(transactionDTO));
+
+        mockMvc.perform(get(url + "/category")
+                        .param("categoryName", categoryName)
+                        .param("startDate", startDate)
+                        .param("endDate", endDate)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful());
+
+
+        verify(transactionService, times(1)).getTransactionsByCategoryAndDate(categoryName, LocalDate.parse(startDate), LocalDate.parse(endDate));
+        verifyNoMoreInteractions(transactionService);
     }
 
 

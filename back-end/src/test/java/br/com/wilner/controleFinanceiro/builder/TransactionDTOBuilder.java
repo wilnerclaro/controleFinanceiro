@@ -22,17 +22,14 @@ public class TransactionDTOBuilder {
         TransactionDTO elemento = builder.elemento;
 
 
-        elemento.setId(1L);
         elemento.setTransactionType("Despesa");
         elemento.setTransactionValue(BigDecimal.valueOf(100));
-        elemento.setDescription("Pizza");
-        elemento.setUserId(1L);
+        elemento.setCategoryName("Moradia");
+        elemento.setDescription("Gasto com Aluguel");
+        elemento.setUserName("Novo Usuário");
         elemento.setPaymentMethod("Pix");
-    }
-
-    public TransactionDTOBuilder comId(Long param) {
-        elemento.setId(param);
-        return this;
+        elemento.setTransactionValueExpected(BigDecimal.valueOf(100));
+        elemento.setTransactionValueRealized(BigDecimal.valueOf(100));
     }
 
     public TransactionDTOBuilder comTransactionType(String param) {
@@ -45,13 +42,18 @@ public class TransactionDTOBuilder {
         return this;
     }
 
+    public TransactionDTOBuilder comCategoryName(String param) {
+        elemento.setCategoryName(param);
+        return this;
+    }
+
     public TransactionDTOBuilder comDescription(String param) {
         elemento.setDescription(param);
         return this;
     }
 
-    public TransactionDTOBuilder comUserId(Long param) {
-        elemento.setUserId(param);
+    public TransactionDTOBuilder comUserName(String param) {
+        elemento.setUserName(param);
         return this;
     }
 
@@ -59,6 +61,17 @@ public class TransactionDTOBuilder {
         elemento.setPaymentMethod(param);
         return this;
     }
+
+    public TransactionDTOBuilder comTransactionValueExpected(BigDecimal param) {
+        elemento.setTransactionValueExpected(param);
+        return this;
+    }
+
+    public TransactionDTOBuilder comTransactionValueRealized(BigDecimal param) {
+        elemento.setTransactionValueRealized(param);
+        return this;
+    }
+
 
     public TransactionDTO agora() {
         return elemento;

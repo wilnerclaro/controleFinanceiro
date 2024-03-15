@@ -1,5 +1,6 @@
 package br.com.wilner.controleFinanceiro.builder;
 
+import br.com.wilner.controleFinanceiro.entities.Category;
 import br.com.wilner.controleFinanceiro.entities.Transaction;
 import br.com.wilner.controleFinanceiro.entities.User;
 
@@ -28,9 +29,13 @@ public class TransactionBuilder {
         elemento.setTransactionType("Despesa");
         elemento.setTransactionValue(BigDecimal.valueOf(100));
         elemento.setTransactionDate(LocalDateTime.now());
-        elemento.setDescription("Pizza");
+        elemento.setUpdateDate(LocalDateTime.now());
+        elemento.setCategory(CategoryBuilder.umCategory().agora());
+        elemento.setDescription("Gasto com Aluguel");
         elemento.setUser(UserBuilder.umUser().agora());
         elemento.setPaymentMethod("Pix");
+        elemento.setTransactionValueExpected(BigDecimal.valueOf(100));
+        elemento.setTransactionValueRealized(BigDecimal.valueOf(100));
     }
 
     public TransactionBuilder comId(Long param) {
@@ -53,6 +58,16 @@ public class TransactionBuilder {
         return this;
     }
 
+    public TransactionBuilder comUpdateDate(LocalDateTime param) {
+        elemento.setUpdateDate(param);
+        return this;
+    }
+
+    public TransactionBuilder comCategory(Category param) {
+        elemento.setCategory(param);
+        return this;
+    }
+
     public TransactionBuilder comDescription(String param) {
         elemento.setDescription(param);
         return this;
@@ -65,6 +80,16 @@ public class TransactionBuilder {
 
     public TransactionBuilder comPaymentMethod(String param) {
         elemento.setPaymentMethod(param);
+        return this;
+    }
+
+    public TransactionBuilder comTransactionValueExpected(BigDecimal param) {
+        elemento.setTransactionValueExpected(param);
+        return this;
+    }
+
+    public TransactionBuilder comTransactionValueRealized(BigDecimal param) {
+        elemento.setTransactionValueRealized(param);
         return this;
     }
 

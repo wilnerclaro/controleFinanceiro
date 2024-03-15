@@ -30,17 +30,18 @@ public class Transaction {
     @Column(name = "DATA_ATUALIZACAO")
     @LastModifiedDate
     private LocalDateTime updateDate;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "categoria_id")
     private Category category;
     @Column(name = "DESCRICAO")
     private String description;
-
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "USER_ID")
     private User user;
     @Column(name = "FORMA_PAGAMENTO")
     private String paymentMethod;
-    
-
+    @Column(name = "VALOR_PREVISTO")
+    private BigDecimal transactionValueExpected;
+    @Column(name = "VALOR_REALIZADO")
+    private BigDecimal transactionValueRealized;
 }

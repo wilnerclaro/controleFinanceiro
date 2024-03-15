@@ -30,14 +30,13 @@ class UserConverterTest {
         User userToEntity = userConverter.converterToEntity(userDTO);
 
         assertAll("UsuarioEntity",
-                () -> assertEquals(user.getId(), userToEntity.getId()),
                 () -> assertEquals(user.getName(), userToEntity.getName()),
                 () -> assertEquals(user.getEmail(), userToEntity.getEmail()),
                 () -> assertEquals(user.getUserStatus(), userToEntity.getUserStatus())
 
         );
 
-        assertNotNull(userToEntity.getId());
+        assertNotNull(userToEntity.getName());
         assertNotNull(userToEntity.getDataCriacao());
     }
 
@@ -51,7 +50,6 @@ class UserConverterTest {
         User userToEntityUpdate = userConverter.converterToEntityUpdate(user, userDTO);
 
         assertAll("UsuarioEntityUpdate",
-                () -> assertEquals(userEsperado.getId(), userToEntityUpdate.getId()),
                 () -> assertEquals(userEsperado.getName(), userToEntityUpdate.getName()),
                 () -> assertEquals(userEsperado.getEmail(), userToEntityUpdate.getEmail()),
                 () -> assertEquals(userEsperado.getUserStatus(), userToEntityUpdate.getUserStatus()),
@@ -71,14 +69,13 @@ class UserConverterTest {
         UserDTO userToDTO = userConverter.converterToDTO(user);
 
         assertAll("UsuarioDTO",
-                () -> assertEquals(userDTO.getId(), userToDTO.getId()),
                 () -> assertEquals(userDTO.getName(), userToDTO.getName()),
                 () -> assertEquals(userDTO.getEmail(), userToDTO.getEmail()),
                 () -> assertEquals(userDTO.getUserStatus(), userToDTO.getUserStatus())
 
         );
 
-        assertNotNull(userToDTO.getId());
+        assertNotNull(userToDTO.getName());
     }
 
 }

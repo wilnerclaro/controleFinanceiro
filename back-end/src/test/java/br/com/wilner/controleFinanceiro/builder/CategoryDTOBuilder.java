@@ -17,16 +17,8 @@ public class CategoryDTOBuilder {
     public static void inicializarDadosPadroes(CategoryDTOBuilder builder) {
         builder.elemento = new CategoryDTO();
         CategoryDTO elemento = builder.elemento;
-
-
-        elemento.setCategoryId(1L);
         elemento.setCategoryName("Moradia");
         elemento.setDescription("Categoria Moradia");
-    }
-
-    public CategoryDTOBuilder comCategoryId(Long param) {
-        elemento.setCategoryId(param);
-        return this;
     }
 
     public CategoryDTOBuilder comCategoryName(String param) {

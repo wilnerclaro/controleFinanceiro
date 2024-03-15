@@ -58,18 +58,18 @@ class UserServiceTest {
 
     @Test
     void deveBuscarUmUsuarioComId() {
-        final long USER_ID = 2L;
-        User userById = umUser().comId(USER_ID).agora();
-        UserDTO userDTOById = umUserDTO().comId(USER_ID).agora();
+        final String USER_NAME = "Teste";
+        User userByName = umUser().comName(USER_NAME).agora();
+        UserDTO userDTOByName = umUserDTO().comName(USER_NAME).agora();
 
-        when(userConverter.converterToDTO(userById)).thenReturn(userDTOById);
-        when(userRepository.findByIdAndUserStatus(USER_ID, ACTIVE)).thenReturn(Optional.of(userById));
+        when(userConverter.converterToDTO(userByName)).thenReturn(userDTOByName);
+        when(userRepository.findByNameAndUserStatus(USER_NAME, ACTIVE)).thenReturn(Optional.of(userByName));
 
-        UserDTO getUserById = userService.getUserById(USER_ID);
+        UserDTO getUserById = userService.getUserByName(USER_NAME);
 
-        assertEquals(userDTOById, getUserById);
-        verify(userConverter).converterToDTO(userById);
-        verify(userRepository).findByIdAndUserStatus(USER_ID, ACTIVE);
+        assertEquals(userDTOByName, getUserById);
+        verify(userConverter).converterToDTO(userByName);
+        verify(userRepository).findByNameAndUserStatus(USER_NAME, ACTIVE);
         verifyNoMoreInteractions(userConverter, userRepository);
 
     }
@@ -94,10 +94,10 @@ class UserServiceTest {
 
     @Test
     void deveDeletarUmUsuarioComSucesso() {
-        final Long USER_ID = 1L;
+        final String USER_NAME = "Teste";
         User user = umUser().comUserStatus(ACTIVE).agora();
 
-        when(userRepository.findByIdAndUserStatus(USER_ID, ACTIVE)).thenReturn(Optional.of(user));
+        when(userRepository.findByNameAndUserStatus(USER_NAME, ACTIVE)).thenReturn(Optional.of(user));
 
         doAnswer(invocation -> {
             User savedUser = invocation.getArgument(0);
@@ -106,18 +106,18 @@ class UserServiceTest {
             return null;
         }).when(userRepository).save(any(User.class));
 
-        userService.deactivationService(USER_ID);
+        userService.deactivationService(USER_NAME);
 
         verify(userRepository, times(1)).save(user);
     }
 
     @Test
     void deveAtualizarUsuarioComSucesso() {
-        final Long USER_ID = 2L;
-        User existingUser = umUser().comId(1L).comName("Novo Usuário").agora();
-        UserDTO updateUserDTO = umUserDTO().comName("Novo Nome").comId(1L).agora();
+        final String USER_NAME = "Teste";
+        User existingUser = umUser().comName("Novo Usuário").agora();
+        UserDTO updateUserDTO = umUserDTO().comName("Novo Nome").agora();
 
-        when(userRepository.findByIdAndUserStatus(USER_ID, ACTIVE)).thenReturn(Optional.ofNullable(existingUser));
+        when(userRepository.findByNameAndUserStatus(USER_NAME, ACTIVE)).thenReturn(Optional.ofNullable(existingUser));
         when(userRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
         when(userConverter.converterToEntityUpdate(any(User.class), any(UserDTO.class)))
                 .thenAnswer(invocation -> {
@@ -129,13 +129,13 @@ class UserServiceTest {
 
         when(userConverter.converterToDTO(existingUser)).thenReturn(updateUserDTO);
 
-        UserDTO result = userService.updateUser(USER_ID, updateUserDTO);
+        UserDTO result = userService.updateUser(USER_NAME, updateUserDTO);
 
         assertNotNull(existingUser);
         assertNotNull(result);
         assertEquals(updateUserDTO.getName(), result.getName());
 
-        verify(userRepository, times(1)).findByIdAndUserStatus(USER_ID, ACTIVE);
+        verify(userRepository, times(1)).findByNameAndUserStatus(USER_NAME, ACTIVE);
         verify(userRepository, times(1)).save(existingUser);
     }
 
@@ -153,15 +153,15 @@ class UserServiceTest {
 
     @Test
     void naoDeveRetornarUsarioCasoIDNaoExista() {
-        final Long USUARIO_ID = 2L;
+        final String USER_NAME = "Teste";
 
-        when(userRepository.findByIdAndUserStatus(USUARIO_ID, ACTIVE)).thenReturn(Optional.empty());
+        when(userRepository.findByNameAndUserStatus(USER_NAME, ACTIVE)).thenReturn(Optional.empty());
 
         String message = assertThrows(ValidationException.class, () -> {
-            userService.getUserById(USUARIO_ID);
+            userService.getUserByName(USER_NAME);
         }).getMessage();
 
-        assertEquals("Usuario não encontrado " + USUARIO_ID, message);
+        assertEquals("Usuario não encontrado " + USER_NAME, message);
     }
 
     @Test
@@ -180,14 +180,14 @@ class UserServiceTest {
 
     @Test
     void deveLancarExceptionQuandoUsuarioNaoEncontrado() {
-        User userId = umUser().comId(1L).agora();
-        when(userRepository.findByIdAndUserStatus(userId.getId(), ACTIVE)).thenReturn(Optional.empty());
+        User username = umUser().comName("Teste").agora();
+        when(userRepository.findByNameAndUserStatus(username.getName(), ACTIVE)).thenReturn(Optional.empty());
 
         Exception exception = assertThrows(EntityNotFoundException.class, () -> {
-            userService.deactivationService(userId.getId());
+            userService.deactivationService(username.getName());
         });
 
-        String expectedMessage = "Usuário não encontrado com ID: " + userId.getId();
+        String expectedMessage = "Usuário não encontrado com ID: " + username.getName();
         String actualMessage = exception.getMessage();
 
         assertEquals(expectedMessage, actualMessage);
@@ -195,19 +195,19 @@ class UserServiceTest {
 
     @Test
     void deveLancarRuntimeExceptionParaErroInesperadoNaAtualizacao() {
-        Long userId = 1L;
+        String USER_NAME = "Teste";
         UserDTO userDTOMock = umUserDTO().agora();
         User userMock = umUser().agora();
 
-        when(userRepository.findByIdAndUserStatus(userId, ACTIVE)).thenReturn(Optional.of(userMock));
+        when(userRepository.findByNameAndUserStatus(USER_NAME, ACTIVE)).thenReturn(Optional.of(userMock));
         when(userConverter.converterToEntityUpdate(userMock, userDTOMock)).thenReturn(userMock);
         when(userRepository.save(userMock)).thenThrow(new RuntimeException("Erro no banco de dados"));
 
         Exception exception = assertThrows(RuntimeException.class, () -> {
-            userService.updateUser(userId, userDTOMock);
+            userService.updateUser(USER_NAME, userDTOMock);
         });
 
-        String expectedMessage = "Falha ao atualizar usaurio: " + userId;
+        String expectedMessage = "Falha ao atualizar usaurio: " + USER_NAME;
         String actualMessage = exception.getMessage();
 
         assertTrue(actualMessage.contains(expectedMessage));
@@ -215,16 +215,16 @@ class UserServiceTest {
 
     @Test
     void deveLancarExceptionQuandoUsuarioNaoEncontradoParaAtualizacao() {
-        Long userId = 1L;
+        String USER_NAME = "Teste";
         UserDTO userDTOMock = umUserDTO().agora();
 
-        when(userRepository.findByIdAndUserStatus(userId, ACTIVE)).thenReturn(Optional.empty());
+        when(userRepository.findByNameAndUserStatus(USER_NAME, ACTIVE)).thenReturn(Optional.empty());
 
         Exception exception = assertThrows(ValidationException.class, () -> {
-            userService.updateUser(userId, userDTOMock);
+            userService.updateUser(USER_NAME, userDTOMock);
         });
 
-        String expectedMessage = "Usuario não encontrado " + userId;
+        String expectedMessage = "Usuario não encontrado " + USER_NAME;
         String actualMessage = exception.getMessage();
 
         assertEquals(expectedMessage, actualMessage);

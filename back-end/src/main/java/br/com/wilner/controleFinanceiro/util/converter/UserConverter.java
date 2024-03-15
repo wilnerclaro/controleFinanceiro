@@ -13,7 +13,6 @@ public class UserConverter {
 
     public User converterToEntity(UserDTO dto) {
         return User.builder()
-                .id(dto.getId())
                 .name(dto.getName())
                 .email(dto.getEmail())
                 .userStatus(dto.getUserStatus() ? UserStatus.ACTIVE : UserStatus.INACTIVE)
@@ -23,7 +22,6 @@ public class UserConverter {
 
     public UserDTO converterToDTO(User user) {
         return UserDTO.builder()
-                .id(user.getId())
                 .name(user.getName())
                 .email(user.getEmail())
                 .userStatus(user.getUserStatus() == UserStatus.ACTIVE)
@@ -32,7 +30,6 @@ public class UserConverter {
 
     public User converterToEntityUpdate(User user, UserDTO userDTO) {
         return User.builder()
-                .id(userDTO.getId() != null ? userDTO.getId() : user.getId())
                 .name(userDTO.getName() != null ? userDTO.getName() : user.getName())
                 .email(userDTO.getEmail() != null ? userDTO.getEmail() : user.getEmail())
                 .userStatus(userDTO.getUserStatus() != null ? (userDTO.getUserStatus() ? UserStatus.ACTIVE : UserStatus.INACTIVE) : (user.getUserStatus() != null ? user.getUserStatus() : UserStatus.INACTIVE))

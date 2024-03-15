@@ -6,6 +6,7 @@ import br.com.wilner.controleFinanceiro.exception.ValidationException;
 import br.com.wilner.controleFinanceiro.repositories.CategoryRepository;
 import br.com.wilner.controleFinanceiro.services.ValidationSerice.CategoryValidationService;
 import br.com.wilner.controleFinanceiro.util.converter.CategoryConverter;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -18,9 +19,7 @@ import java.util.Optional;
 
 import static br.com.wilner.controleFinanceiro.builder.CategoryBuilder.umCategory;
 import static br.com.wilner.controleFinanceiro.builder.CategoryDTOBuilder.umCategoryDTO;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -50,7 +49,6 @@ class CategoryServiceTest {
         CategoryDTO savedCategory = categoryService.saveCategory(mockCategoryDTO);
 
         assertEquals(mockCategoryDTO, savedCategory);
-        assertThat(savedCategory).isNotNull();
         verify(categoryConverter).converterToDTO(mockCategory);
         verify(categoryConverter).converterToEntity(mockCategoryDTO);
         verify(categoryRepository).save(mockCategory);
@@ -111,24 +109,55 @@ class CategoryServiceTest {
         Category mockCategory = umCategory().agora();
 
         when(categoryConverter.converterToDTO(mockCategory)).thenReturn(mockCategoryDTO);
-        when(categoryRepository.findByNameIgnoreCase(mockCategory.getName())).thenReturn(Optional.of(mockCategory));
+        when(categoryRepository.findByNameAndIsActive(mockCategoryDTO.getCategoryName(), true)).thenReturn(Optional.of(mockCategory));
 
         CategoryDTO getCategoryByName = categoryService.getCategoryByName(mockCategory.getName());
 
         assertEquals(mockCategoryDTO, getCategoryByName);
         verify(categoryConverter).converterToDTO(mockCategory);
-        verify(categoryRepository).findByNameIgnoreCase(mockCategory.getName());
         verifyNoMoreInteractions(categoryConverter, categoryRepository);
     }
 
     @Test
     void deveLancarValidationExceptionQuandoNomeDaCategoriaNaoEncontrado() {
-        Category mockCategory = umCategory().agora();
-        when(categoryRepository.findByNameIgnoreCase(mockCategory.getName())).thenReturn(Optional.empty());
+        Category mockCategory = umCategory().comName("Teste").agora();
 
         ValidationException exception = assertThrows(ValidationException.class,
                 () -> categoryService.getCategoryByName(mockCategory.getName()));
 
         assertEquals("Categoria não encontrada " + mockCategory.getName(), exception.getMessage());
     }
+
+    @Test
+    void shouldDeactivateCategorySuccessfully() {
+        // Setup
+        String categoryName = "Lazer";
+        Category mockCategory = new Category(); // Use o construtor real da sua entidade Category
+        mockCategory.setIsActive(true);
+
+        when(categoryRepository.findByNameAndIsActive(categoryName, true)).thenReturn(Optional.of(mockCategory));
+
+        // Execute
+        categoryService.deactivationService(categoryName);
+
+        // Verify
+        assertFalse(mockCategory.getIsActive());
+        verify(categoryRepository).save(mockCategory);
+        verify(categoryRepository).findByNameAndIsActive(categoryName, true);
+    }
+
+    @Test
+    void shouldThrowEntityNotFoundExceptionWhenCategoryNotFound() {
+        // Setup
+        String categoryName = "Inexistente";
+
+        when(categoryRepository.findByNameAndIsActive(categoryName, true)).thenReturn(Optional.empty());
+
+
+        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
+                () -> categoryService.deactivationService(categoryName));
+
+        assertEquals("Categoria não encontrada ", exception.getMessage());
+    }
+
 }

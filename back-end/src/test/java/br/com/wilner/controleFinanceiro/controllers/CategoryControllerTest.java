@@ -19,27 +19,22 @@ import java.util.Collections;
 import static br.com.wilner.controleFinanceiro.builder.CategoryDTOBuilder.umCategoryDTO;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
 class CategoryControllerTest {
 
+    private final ObjectMapper objectMapper = new ObjectMapper();
     @InjectMocks
     private CategoryController categoryController;
-
     @Mock
     private CategoryService categoryService;
-
     private MockMvc mockMvc;
     private String json;
     private CategoryDTO categoryDTO;
-
     private String url;
-
-    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @BeforeEach
     void setUp() throws JsonProcessingException {
@@ -101,5 +96,32 @@ class CategoryControllerTest {
                 .andExpect(status().is4xxClientError());
 
         verifyNoMoreInteractions(categoryService);
+    }
+
+    @Test
+    void naoDeveEnviarReqiestDeleteCasoNameSejaNull() throws Exception {
+        mockMvc.perform(delete(url + "/delete")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError());
+
+        verifyNoMoreInteractions(categoryService);
+
+    }
+
+    @Test
+    void deveDeletarUsuarioComSucesso() throws Exception {
+        String categoryName = "Teste";
+        doNothing().when(categoryService).deactivationService(categoryName);
+
+        mockMvc.perform(delete(url + "/delete")
+                        .param("name", categoryName)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful());
+
+        verify(categoryService).deactivationService(categoryName);
+        verifyNoMoreInteractions(categoryService);
+
     }
 }

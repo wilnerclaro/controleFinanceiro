@@ -35,11 +35,10 @@ class CategoryConverterTest {
         Category categoryToEntity = categoryConverter.converterToEntity(categoryDTO);
 
         assertAll("CategoryEntity",
-                () -> assertEquals(category.getId(), categoryToEntity.getId()),
                 () -> assertEquals(category.getName(), categoryToEntity.getName()),
                 () -> assertEquals(category.getDescription(), categoryToEntity.getDescription())
         );
-        assertNotNull(categoryToEntity.getId());
+        assertNotNull(categoryToEntity.getName());
         assertNotNull(categoryToEntity.getName());
 
 

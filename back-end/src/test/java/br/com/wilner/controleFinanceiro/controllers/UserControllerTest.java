@@ -24,20 +24,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(MockitoExtension.class)
 class UserControllerTest {
 
+    private final ObjectMapper objectMapper = new ObjectMapper();
     @InjectMocks
     private UserController userController;
     @Mock
     private UserService userService;
-
-
     private MockMvc mockMvc;
     private String json;
-
     private UserDTO userDTO;
-
     private String url;
-
-    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @BeforeEach
     void setUp() throws JsonProcessingException {
@@ -87,17 +82,17 @@ class UserControllerTest {
 
     @Test
     void deveAtualizarUmNovoUsuarioComSucesso() throws Exception {
-        Long usuerID = 1L;
-        when(userService.updateUser(eq(usuerID), any(UserDTO.class))).thenReturn(new UserDTO());
+        String userName = "Teste";
+        when(userService.updateUser(eq(userName), any(UserDTO.class))).thenReturn(new UserDTO());
 
         mockMvc.perform(put(url + "/update")
-                        .param("id", usuerID.toString())
+                        .param("name", userName)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful());
 
-        verify(userService).updateUser(eq(usuerID), any(UserDTO.class));
+        verify(userService).updateUser(eq(userName), any(UserDTO.class));
         verifyNoMoreInteractions(userService);
 
     }
@@ -116,16 +111,16 @@ class UserControllerTest {
 
     @Test
     void deveDeletarUsuarioComSucesso() throws Exception {
-        Long usuerID = 1L;
-        doNothing().when(userService).deactivationService(eq(usuerID));
+        String userName = "Teste";
+        doNothing().when(userService).deactivationService(eq(userName));
 
         mockMvc.perform(delete(url + "/delete")
-                        .param("id", usuerID.toString())
+                        .param("name", userName)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful());
 
-        verify(userService).deactivationService(eq(usuerID));
+        verify(userService).deactivationService(eq(userName));
         verifyNoMoreInteractions(userService);
 
     }
@@ -143,17 +138,18 @@ class UserControllerTest {
 
     @Test
     void deveBuscaUmUsuarioComIDComSucesso() throws Exception {
-        Long usuerID = 1L;
-        when(userService.getUserById(eq(usuerID))).thenReturn(new UserDTO());
+        String userName = "Teste";
+
+        when(userService.getUserByName(eq(userName))).thenReturn(new UserDTO());
 
         mockMvc.perform(get(url + "/user")
-                        .param("id", usuerID.toString())
+                        .param("name", userName)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful());
 
-        verify(userService).getUserById(eq(usuerID));
+        verify(userService).getUserByName(eq(userName));
         verifyNoMoreInteractions(userService);
 
     }

@@ -12,8 +12,7 @@ import lombok.*;
 
 public class UserDTO {
 
-    @JsonProperty(value = "id")
-    private Long id;
+    
     @JsonProperty(value = "name")
     private String name;
     @JsonProperty(value = "email")

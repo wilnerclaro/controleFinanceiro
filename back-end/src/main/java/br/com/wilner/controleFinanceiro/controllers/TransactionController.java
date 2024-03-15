@@ -6,9 +6,13 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequestMapping("/transactions")
@@ -48,16 +52,31 @@ public class TransactionController {
         return ResponseEntity.accepted().build();
     }
 
-    @Operation(summary = "Busca Transação Por Id", method = "GET")
+    @Operation(summary = "Agrupa transações por categoria", method = "GET")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Busca realizada com sucesso"),
             @ApiResponse(responseCode = "500", description = "Erro ao  realizar busca dos dados")
     })
 
-    @GetMapping("/user")
-    public ResponseEntity<TransactionDTO> getTransactionByUserId(@RequestParam Long id) {
-        return ResponseEntity.ok(transactionService.getTransactionById(id));
+    @GetMapping("/category")
+    public ResponseEntity<List<TransactionDTO>> getTransactionsByCategoryAndDate(
+            @RequestParam String categoryName,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+
+        List<TransactionDTO> transactions = transactionService.getTransactionsByCategoryAndDate(categoryName, startDate, endDate);
+        return ResponseEntity.ok(transactions);
     }
 
+    @Operation(summary = "Busca Transação Por User Name", method = "GET")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Busca realizada com sucesso"),
+            @ApiResponse(responseCode = "500", description = "Erro ao  realizar busca dos dados")
+    })
+
+    @GetMapping("/users")
+    public ResponseEntity<List<TransactionDTO>> getTransactionByUserName(@RequestParam String name) {
+        return ResponseEntity.ok(transactionService.getTransactionsByUserName(name));
+    }
 
 }

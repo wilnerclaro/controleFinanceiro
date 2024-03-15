@@ -5,7 +5,6 @@ import br.com.wilner.controleFinanceiro.entities.Transaction;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.Collections;
 
 public class CategoryBuilder {
     private Category elemento;
@@ -29,7 +28,7 @@ public class CategoryBuilder {
         elemento.setDescription("Categoria Moradia");
         elemento.setCreationDate(LocalDateTime.now());
         elemento.setUpdateDate(LocalDateTime.now());
-        elemento.setTransactions(Collections.singletonList(TransactionBuilder.umTransaction().agora()));
+        // elemento.setTransactions(Collections.singletonList(TransactionBuilder.umTransaction().agora()));
         elemento.setIsActive(true);
     }
 

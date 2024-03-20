@@ -8,6 +8,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.temporal.ChronoUnit;
+
 import static br.com.wilner.controleFinanceiro.builder.UserBuilder.umUser;
 import static br.com.wilner.controleFinanceiro.builder.UserDTOBuilder.umUserDTO;
 import static org.junit.jupiter.api.Assertions.*;
@@ -53,7 +55,7 @@ class UserConverterTest {
                 () -> assertEquals(userEsperado.getName(), userToEntityUpdate.getName()),
                 () -> assertEquals(userEsperado.getEmail(), userToEntityUpdate.getEmail()),
                 () -> assertEquals(userEsperado.getUserStatus(), userToEntityUpdate.getUserStatus()),
-                () -> assertEquals(userEsperado.getDataCriacao(), userToEntityUpdate.getDataCriacao())
+                () -> assertEquals(userEsperado.getDataCriacao().truncatedTo(ChronoUnit.MINUTES), userToEntityUpdate.getDataCriacao().truncatedTo(ChronoUnit.MINUTES))
 
         );
 

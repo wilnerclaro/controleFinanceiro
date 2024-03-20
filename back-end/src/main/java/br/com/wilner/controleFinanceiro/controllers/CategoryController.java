@@ -59,6 +59,12 @@ public class CategoryController {
         categoryService.deactivationService(name);
         return ResponseEntity.accepted().build();
     }
+
+    @GetMapping("/totals/categoryName")
+    public ResponseEntity<CategoryDTO> getCategoryTotals(@RequestParam String categoryName) {
+        CategoryDTO categoryTotals = categoryService.calculateTotalsForCategory(categoryName);
+        return ResponseEntity.ok(categoryTotals);
+    }
 }
 
 

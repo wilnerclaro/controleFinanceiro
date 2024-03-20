@@ -2,6 +2,8 @@ package br.com.wilner.controleFinanceiro.builder;
 
 import br.com.wilner.controleFinanceiro.DTO.CategoryDTO;
 
+import java.math.BigDecimal;
+
 public class CategoryDTOBuilder {
     private CategoryDTO elemento;
 
@@ -17,8 +19,12 @@ public class CategoryDTOBuilder {
     public static void inicializarDadosPadroes(CategoryDTOBuilder builder) {
         builder.elemento = new CategoryDTO();
         CategoryDTO elemento = builder.elemento;
+
+
         elemento.setCategoryName("Moradia");
-        elemento.setDescription("Categoria Moradia");
+        elemento.setDescription("Gastos com Moradia");
+        elemento.setTotalPredicted(BigDecimal.valueOf(100));
+        elemento.setTotalRealized(BigDecimal.valueOf(300));
     }
 
     public CategoryDTOBuilder comCategoryName(String param) {
@@ -28,6 +34,16 @@ public class CategoryDTOBuilder {
 
     public CategoryDTOBuilder comDescription(String param) {
         elemento.setDescription(param);
+        return this;
+    }
+
+    public CategoryDTOBuilder comTotalPredicted(BigDecimal param) {
+        elemento.setTotalPredicted(param);
+        return this;
+    }
+
+    public CategoryDTOBuilder comTotalRealized(BigDecimal param) {
+        elemento.setTotalRealized(param);
         return this;
     }
 

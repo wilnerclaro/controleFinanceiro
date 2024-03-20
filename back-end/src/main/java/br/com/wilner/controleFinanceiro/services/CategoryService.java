@@ -11,6 +11,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -64,4 +65,18 @@ public class CategoryService implements DeactivationService {
         category.setUpdateDate(LocalDateTime.now());
         categoryRepository.save(category);
     }
+
+    public CategoryDTO calculateTotalsForCategory(String categoryName) {
+        List<Object[]> results = categoryRepository.findTotalsByCategoryNameNative(categoryName);
+        if (results.isEmpty()) {
+            throw new EntityNotFoundException("Categoria não encontrada ou sem transações: " + categoryName);
+        }
+        Object[] result = results.get(0);
+        return new CategoryDTO(
+                (String) result[0],
+                (BigDecimal) result[1],
+                (BigDecimal) result[2]
+        );
+    }
+
 }

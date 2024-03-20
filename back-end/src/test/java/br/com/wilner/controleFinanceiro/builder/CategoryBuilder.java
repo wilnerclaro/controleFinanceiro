@@ -25,7 +25,7 @@ public class CategoryBuilder {
 
         elemento.setId(1L);
         elemento.setName("Moradia");
-        elemento.setDescription("Categoria Moradia");
+        elemento.setDescription("Gastos com Moradia");
         elemento.setCreationDate(LocalDateTime.now());
         elemento.setUpdateDate(LocalDateTime.now());
         // elemento.setTransactions(Collections.singletonList(TransactionBuilder.umTransaction().agora()));

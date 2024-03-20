@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 
 import static br.com.wilner.controleFinanceiro.builder.CategoryDTOBuilder.umCategoryDTO;
@@ -123,5 +124,22 @@ class CategoryControllerTest {
         verify(categoryService).deactivationService(categoryName);
         verifyNoMoreInteractions(categoryService);
 
+    }
+
+    @Test
+    void getCategoryTotals_ShouldReturnCategoryTotals_WhenCategoryNameIsProvided() throws Exception {
+        String categoryName = "Entertainment";
+        CategoryDTO categoryTotals = new CategoryDTO(categoryName, null, new BigDecimal("100"), new BigDecimal("90"));
+
+        when(categoryService.calculateTotalsForCategory(anyString())).thenReturn(categoryTotals);
+
+        mockMvc.perform(get(url + "/totals/categoryName")
+                        .param("categoryName", categoryName)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful());
+
+        verify(categoryService, times(1)).calculateTotalsForCategory(categoryName);
     }
 }

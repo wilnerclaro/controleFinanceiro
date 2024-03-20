@@ -13,6 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -159,5 +160,43 @@ class CategoryServiceTest {
 
         assertEquals("Categoria não encontrada ", exception.getMessage());
     }
+
+    @Test
+    void calculateTotalsForCategory_ShouldReturnTotals_WhenCategoryExists() {
+        // Given
+        String categoryName = "Entertainment";
+        BigDecimal totalPredicted = new BigDecimal("100");
+        BigDecimal totalRealized = new BigDecimal("90");
+        List<Object[]> mockResults = Collections.singletonList(new Object[]{categoryName, totalPredicted, totalRealized});
+
+        when(categoryRepository.findTotalsByCategoryNameNative(categoryName)).thenReturn(mockResults);
+
+        // Prepare o CategoryDTO esperado para comparação (ajuste conforme seu construtor real)
+        CategoryDTO expectedDTO = new CategoryDTO(categoryName, totalPredicted, totalRealized);
+
+        // When
+        CategoryDTO result = categoryService.calculateTotalsForCategory(categoryName);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(expectedDTO.getCategoryName(), result.getCategoryName());
+        assertEquals(0, expectedDTO.getTotalPredicted().compareTo(result.getTotalPredicted()));
+        assertEquals(0, expectedDTO.getTotalRealized().compareTo(result.getTotalRealized()));
+    }
+
+
+    @Test
+    void calculateTotalsForCategory_ShouldThrowEntityNotFoundException_WhenCategoryNotFound() {
+        // Given
+        String categoryName = "Nonexistent";
+        when(categoryRepository.findTotalsByCategoryNameNative(categoryName)).thenReturn(Collections.emptyList());
+
+        // When & Then
+        Exception exception = assertThrows(EntityNotFoundException.class, () ->
+                categoryService.calculateTotalsForCategory(categoryName));
+
+        assertEquals("Categoria não encontrada ou sem transações: " + categoryName, exception.getMessage());
+    }
+
 
 }

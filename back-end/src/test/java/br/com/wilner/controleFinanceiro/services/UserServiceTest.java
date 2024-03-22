@@ -102,7 +102,7 @@ class UserServiceTest {
         doAnswer(invocation -> {
             User savedUser = invocation.getArgument(0);
             assertEquals(INACTIVE, savedUser.getUserStatus());
-            assertNotNull(savedUser.getDataAtualizacao());
+            assertNotNull(savedUser.getUpdateDate());
             return null;
         }).when(userRepository).save(any(User.class));
 

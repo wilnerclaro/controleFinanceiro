@@ -16,7 +16,7 @@ public class UserConverter {
                 .name(dto.getName())
                 .email(dto.getEmail())
                 .userStatus(dto.getUserStatus() ? UserStatus.ACTIVE : UserStatus.INACTIVE)
-                .dataCriacao(LocalDateTime.now())
+                .createDate(LocalDateTime.now())
                 .build();
     }
 
@@ -33,8 +33,8 @@ public class UserConverter {
                 .name(userDTO.getName() != null ? userDTO.getName() : user.getName())
                 .email(userDTO.getEmail() != null ? userDTO.getEmail() : user.getEmail())
                 .userStatus(userDTO.getUserStatus() != null ? (userDTO.getUserStatus() ? UserStatus.ACTIVE : UserStatus.INACTIVE) : (user.getUserStatus() != null ? user.getUserStatus() : UserStatus.INACTIVE))
-                .dataCriacao(user.getDataCriacao())
-                .dataAtualizacao(LocalDateTime.now())
+                .createDate(user.getCreateDate())
+                .updateDate(LocalDateTime.now())
                 .build();
     }
 

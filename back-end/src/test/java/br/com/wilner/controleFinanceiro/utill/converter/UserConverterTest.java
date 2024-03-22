@@ -39,7 +39,7 @@ class UserConverterTest {
         );
 
         assertNotNull(userToEntity.getName());
-        assertNotNull(userToEntity.getDataCriacao());
+        assertNotNull(userToEntity.getCreateDate());
     }
 
     @Test
@@ -55,11 +55,11 @@ class UserConverterTest {
                 () -> assertEquals(userEsperado.getName(), userToEntityUpdate.getName()),
                 () -> assertEquals(userEsperado.getEmail(), userToEntityUpdate.getEmail()),
                 () -> assertEquals(userEsperado.getUserStatus(), userToEntityUpdate.getUserStatus()),
-                () -> assertEquals(userEsperado.getDataCriacao().truncatedTo(ChronoUnit.MINUTES), userToEntityUpdate.getDataCriacao().truncatedTo(ChronoUnit.MINUTES))
+                () -> assertEquals(userEsperado.getCreateDate().truncatedTo(ChronoUnit.MINUTES), userToEntityUpdate.getCreateDate().truncatedTo(ChronoUnit.MINUTES))
 
         );
 
-        assertNotNull(userToEntityUpdate.getDataAtualizacao());
+        assertNotNull(userToEntityUpdate.getUpdateDate());
 
     }
 

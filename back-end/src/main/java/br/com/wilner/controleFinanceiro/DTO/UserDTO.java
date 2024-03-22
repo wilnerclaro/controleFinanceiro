@@ -12,12 +12,12 @@ import lombok.*;
 
 public class UserDTO {
 
-    
+
     @JsonProperty(value = "name")
     private String name;
     @JsonProperty(value = "email")
     private String email;
-    @JsonProperty(value = "status")
+    @JsonProperty(value = "status_usuario")
     private Boolean userStatus = true;
 
 }

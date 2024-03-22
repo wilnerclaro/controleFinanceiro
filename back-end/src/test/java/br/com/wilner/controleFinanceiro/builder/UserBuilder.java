@@ -29,8 +29,8 @@ public class UserBuilder {
         elemento.setName("Novo Usuário");
         elemento.setEmail("teste@email.com");
         elemento.setUserStatus(ACTIVE);
-        elemento.setDataCriacao(LocalDateTime.now());
-        elemento.setDataAtualizacao(LocalDateTime.now());
+        elemento.setCreateDate(LocalDateTime.now());
+        elemento.setUpdateDate(LocalDateTime.now());
     }
 
     public UserBuilder comId(Long param) {
@@ -54,12 +54,12 @@ public class UserBuilder {
     }
 
     public UserBuilder comDataCriacao(LocalDateTime param) {
-        elemento.setDataCriacao(param);
+        elemento.setCreateDate(param);
         return this;
     }
 
     public UserBuilder comDataAtualizacao(LocalDateTime param) {
-        elemento.setDataAtualizacao(param);
+        elemento.setUpdateDate(param);
         return this;
     }
 

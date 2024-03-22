@@ -6,17 +6,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
-    @Transactional
     List<Transaction> findByUserId(Long userId);
-
-    @Query("SELECT t FROM Transaction t WHERE t.category.name = :categoryName AND t.transactionDate BETWEEN :startDate AND :endDate")
-    List<Transaction> findByCategoryIdAndTransactionDateBetween(String categoryName, LocalDate startDate, LocalDate endDate);
 
     @Transactional
     List<Transaction> findByUserName(String name);

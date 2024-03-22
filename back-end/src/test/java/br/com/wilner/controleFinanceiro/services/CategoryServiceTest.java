@@ -1,6 +1,7 @@
 package br.com.wilner.controleFinanceiro.services;
 
 import br.com.wilner.controleFinanceiro.DTO.CategoryDTO;
+import br.com.wilner.controleFinanceiro.builder.CategoryBuilder;
 import br.com.wilner.controleFinanceiro.entities.Category;
 import br.com.wilner.controleFinanceiro.exception.ValidationException;
 import br.com.wilner.controleFinanceiro.repositories.CategoryRepository;
@@ -130,26 +131,20 @@ class CategoryServiceTest {
     }
 
     @Test
-    void shouldDeactivateCategorySuccessfully() {
-        // Setup
-        String categoryName = "Lazer";
-        Category mockCategory = new Category(); // Use o construtor real da sua entidade Category
-        mockCategory.setIsActive(true);
+    void deveDesativarCategoriaComSucesso() {
+        Category category = CategoryBuilder.umCategory().agora();
 
-        when(categoryRepository.findByNameAndIsActive(categoryName, true)).thenReturn(Optional.of(mockCategory));
+        when(categoryRepository.findByNameAndIsActive(category.getName(), true)).thenReturn(Optional.of(category));
 
-        // Execute
-        categoryService.deactivationService(categoryName);
+        categoryService.deactivationService(category.getName());
 
-        // Verify
-        assertFalse(mockCategory.getIsActive());
-        verify(categoryRepository).save(mockCategory);
-        verify(categoryRepository).findByNameAndIsActive(categoryName, true);
+        assertFalse(category.getIsActive());
+        verify(categoryRepository).save(category);
+        verify(categoryRepository).findByNameAndIsActive(category.getName(), true);
     }
 
     @Test
-    void shouldThrowEntityNotFoundExceptionWhenCategoryNotFound() {
-        // Setup
+    void deveLancarExcptionQuandoUmaCategoriaNaoEEncontrada() {
         String categoryName = "Inexistente";
 
         when(categoryRepository.findByNameAndIsActive(categoryName, true)).thenReturn(Optional.empty());
@@ -163,7 +158,7 @@ class CategoryServiceTest {
 
     @Test
     void calculateTotalsForCategory_ShouldReturnTotals_WhenCategoryExists() {
-        // Given
+
         String categoryName = "Entertainment";
         BigDecimal totalPredicted = new BigDecimal("100");
         BigDecimal totalRealized = new BigDecimal("90");
@@ -171,13 +166,10 @@ class CategoryServiceTest {
 
         when(categoryRepository.findTotalsByCategoryNameNative(categoryName)).thenReturn(mockResults);
 
-        // Prepare o CategoryDTO esperado para comparação (ajuste conforme seu construtor real)
         CategoryDTO expectedDTO = new CategoryDTO(categoryName, totalPredicted, totalRealized);
 
-        // When
         CategoryDTO result = categoryService.calculateTotalsForCategory(categoryName);
 
-        // Then
         assertNotNull(result);
         assertEquals(expectedDTO.getCategoryName(), result.getCategoryName());
         assertEquals(0, expectedDTO.getTotalPredicted().compareTo(result.getTotalPredicted()));
@@ -186,12 +178,10 @@ class CategoryServiceTest {
 
 
     @Test
-    void calculateTotalsForCategory_ShouldThrowEntityNotFoundException_WhenCategoryNotFound() {
-        // Given
+    void deveDarErroQuandoACategoriaOuTransacaoNaoForEncontrado() {
         String categoryName = "Nonexistent";
         when(categoryRepository.findTotalsByCategoryNameNative(categoryName)).thenReturn(Collections.emptyList());
 
-        // When & Then
         Exception exception = assertThrows(EntityNotFoundException.class, () ->
                 categoryService.calculateTotalsForCategory(categoryName));
 

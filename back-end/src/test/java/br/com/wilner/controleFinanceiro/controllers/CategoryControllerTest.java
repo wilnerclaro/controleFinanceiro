@@ -127,7 +127,7 @@ class CategoryControllerTest {
     }
 
     @Test
-    void getCategoryTotals_ShouldReturnCategoryTotals_WhenCategoryNameIsProvided() throws Exception {
+    void deveRetornarOTotalPrevistoERealizadoPorCategoria() throws Exception {
         String categoryName = "Entertainment";
         CategoryDTO categoryTotals = new CategoryDTO(categoryName, null, new BigDecimal("100"), new BigDecimal("90"));
 

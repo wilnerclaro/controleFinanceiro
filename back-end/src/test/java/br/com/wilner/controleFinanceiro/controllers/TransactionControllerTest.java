@@ -156,7 +156,7 @@ class TransactionControllerTest {
     }
 
     @Test
-    void shouldGetTransactionsByCategoryAndDateSuccessfully() throws Exception {
+    void deveBuscarTransacoesPorCategoriaEData() throws Exception {
         String categoryName = "Lazer";
         String startDate = "2022-01-01";
         String endDate = "2022-01-31";

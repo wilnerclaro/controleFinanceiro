@@ -74,7 +74,7 @@ public class UserService implements DeactivationService {
         User user = userRepository.findByNameAndUserStatus(name, UserStatus.ACTIVE)
                 .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado com ID: " + name));
         user.setUserStatus(INACTIVE);
-        user.setDataAtualizacao(LocalDateTime.now());
+        user.setUpdateDate(LocalDateTime.now());
         userRepository.save(user);
     }
 }

@@ -34,7 +34,7 @@ public class TransactionConverter {
                 .category(findCategory(dto))
                 .paymentMethod(dto.getPaymentMethod())
                 .transactionValueExpected(dto.getTransactionValueExpected())
-                .transactionValueRealized(dto.getTransactionValueRealized())
+                .transactionValueRealized(dto.getTransactionValue())
                 .build();
     }
 

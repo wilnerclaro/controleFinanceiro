@@ -1,7 +1,7 @@
 package br.com.wilner.controleFinanceiro.builder;
 
 
-import br.com.wilner.controleFinanceiro.DTO.UserDTO;
+import br.com.wilner.controleFinanceiro.DTO.CategoryDTO;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -22,6 +22,10 @@ public class BuilderMaster {
         listaImports.add("import java.util.Arrays;");
 //		listaImports.add("import java.util.Collections;");
 //		listaImports.add("import java.util.ArrayList;");
+    }
+
+    public static void main(String[] args) {
+        new BuilderMaster().gerarCodigoClasse(CategoryDTO.class);
     }
 
     @SuppressWarnings("rawtypes")
@@ -106,7 +110,7 @@ public class BuilderMaster {
         }
         System.out.println("import " + classe.getCanonicalName() + ";");
         System.out.println("\n");
-        System.out.println(builder.toString());
+        System.out.println(builder);
     }
 
     @SuppressWarnings("rawtypes")
@@ -144,10 +148,6 @@ public class BuilderMaster {
     public void registrarImports(String classe) {
         if (classe.contains("."))
             listaImports.add("import " + classe + ";");
-    }
-
-    public static void main(String[] args) {
-        new BuilderMaster().gerarCodigoClasse(UserDTO.class);
     }
 
 }

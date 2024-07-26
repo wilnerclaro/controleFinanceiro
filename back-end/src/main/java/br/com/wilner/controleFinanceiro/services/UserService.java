@@ -1,7 +1,7 @@
 package br.com.wilner.controleFinanceiro.services;
 
 import br.com.wilner.controleFinanceiro.DTO.UserDTO;
-import br.com.wilner.controleFinanceiro.entities.User;
+import br.com.wilner.controleFinanceiro.entities.User.User;
 import br.com.wilner.controleFinanceiro.exception.ValidationException;
 import br.com.wilner.controleFinanceiro.repositories.UserRepository;
 import br.com.wilner.controleFinanceiro.services.SoftDeletes.DeactivationService;

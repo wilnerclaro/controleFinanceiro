@@ -1,7 +1,7 @@
 package br.com.wilner.controleFinanceiro.builder;
 
-import br.com.wilner.controleFinanceiro.entities.Category;
-import br.com.wilner.controleFinanceiro.entities.Transaction;
+import br.com.wilner.controleFinanceiro.entities.Category.Category;
+import br.com.wilner.controleFinanceiro.entities.Transaction.Transaction;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;

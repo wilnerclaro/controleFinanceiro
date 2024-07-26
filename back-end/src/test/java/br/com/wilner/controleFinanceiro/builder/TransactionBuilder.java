@@ -1,8 +1,8 @@
 package br.com.wilner.controleFinanceiro.builder;
 
-import br.com.wilner.controleFinanceiro.entities.Category;
-import br.com.wilner.controleFinanceiro.entities.Transaction;
-import br.com.wilner.controleFinanceiro.entities.User;
+import br.com.wilner.controleFinanceiro.entities.Category.Category;
+import br.com.wilner.controleFinanceiro.entities.Transaction.Transaction;
+import br.com.wilner.controleFinanceiro.entities.User.User;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

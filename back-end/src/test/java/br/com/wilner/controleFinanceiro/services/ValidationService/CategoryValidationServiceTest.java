@@ -1,7 +1,7 @@
 package br.com.wilner.controleFinanceiro.services.ValidationService;
 
 import br.com.wilner.controleFinanceiro.builder.CategoryBuilder;
-import br.com.wilner.controleFinanceiro.entities.Category;
+import br.com.wilner.controleFinanceiro.entities.Category.Category;
 import br.com.wilner.controleFinanceiro.exception.ValidationException;
 import br.com.wilner.controleFinanceiro.services.ValidationSerice.CategoryValidationService;
 import org.junit.jupiter.api.Test;

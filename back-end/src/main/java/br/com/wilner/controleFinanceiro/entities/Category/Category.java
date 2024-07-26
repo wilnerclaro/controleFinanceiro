@@ -1,10 +1,12 @@
-package br.com.wilner.controleFinanceiro.entities;
+package br.com.wilner.controleFinanceiro.entities.Category;
 
+import br.com.wilner.controleFinanceiro.entities.Transaction.Transaction;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -34,5 +36,9 @@ public class Category {
     private List<Transaction> transactions;
     @Column(name = "IS_ACTIVE")
     private Boolean isActive = true;
+    @Column(name = "valor_previsto")
+    private BigDecimal valueExpected;
+    @Column(name = "valor_realizado")
+    private BigDecimal valueRealized;
 
 }

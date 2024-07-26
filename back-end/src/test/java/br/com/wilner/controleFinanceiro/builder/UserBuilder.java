@@ -1,6 +1,6 @@
 package br.com.wilner.controleFinanceiro.builder;
 
-import br.com.wilner.controleFinanceiro.entities.User;
+import br.com.wilner.controleFinanceiro.entities.User.User;
 import br.com.wilner.controleFinanceiro.util.UserStatus;
 
 import java.time.LocalDateTime;

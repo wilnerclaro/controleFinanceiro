@@ -1,6 +1,8 @@
 package br.com.wilner.controleFinanceiro.controllers;
 
 import br.com.wilner.controleFinanceiro.DTO.CategoryDTO;
+import br.com.wilner.controleFinanceiro.entities.Category.CategoryRequestDTO;
+import br.com.wilner.controleFinanceiro.entities.Category.CategoryResponseDTO;
 import br.com.wilner.controleFinanceiro.services.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -25,7 +27,7 @@ public class CategoryController {
             @ApiResponse(responseCode = "500", description = "Erro ao  salvar categoria")
     })
     @PostMapping("/new")
-    public ResponseEntity<CategoryDTO> createCategory(@RequestBody CategoryDTO categoryDTO) {
+    public ResponseEntity<CategoryResponseDTO> createCategory(@RequestBody CategoryRequestDTO categoryDTO) {
         return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.saveCategory(categoryDTO));
     }
 
@@ -35,7 +37,7 @@ public class CategoryController {
             @ApiResponse(responseCode = "500", description = "Erro ao  realizar busca dos dados")
     })
     @GetMapping("")
-    public ResponseEntity<List<CategoryDTO>> findAllCategories() {
+    public ResponseEntity<List<CategoryResponseDTO>> findAllCategories() {
         return ResponseEntity.ok(categoryService.getAllCategories());
     }
 
@@ -45,7 +47,7 @@ public class CategoryController {
             @ApiResponse(responseCode = "500", description = "Erro ao  realizar busca dos dados")
     })
     @GetMapping("/category")
-    public ResponseEntity<CategoryDTO> findCategoryByName(@RequestParam String name) {
+    public ResponseEntity<CategoryResponseDTO> findCategoryByName(@RequestParam String name) {
         return ResponseEntity.ok(categoryService.getCategoryByName(name));
     }
 

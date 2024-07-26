@@ -1,9 +1,9 @@
 package br.com.wilner.controleFinanceiro.util.converter;
 
 import br.com.wilner.controleFinanceiro.DTO.TransactionDTO;
-import br.com.wilner.controleFinanceiro.entities.Category;
-import br.com.wilner.controleFinanceiro.entities.Transaction;
-import br.com.wilner.controleFinanceiro.entities.User;
+import br.com.wilner.controleFinanceiro.entities.Category.Category;
+import br.com.wilner.controleFinanceiro.entities.Transaction.Transaction;
+import br.com.wilner.controleFinanceiro.entities.User.User;
 import br.com.wilner.controleFinanceiro.repositories.CategoryRepository;
 import br.com.wilner.controleFinanceiro.repositories.UserRepository;
 import org.springframework.stereotype.Component;

@@ -1,6 +1,6 @@
 package br.com.wilner.controleFinanceiro.repositories;
 
-import br.com.wilner.controleFinanceiro.entities.User;
+import br.com.wilner.controleFinanceiro.entities.User.User;
 import br.com.wilner.controleFinanceiro.util.UserStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

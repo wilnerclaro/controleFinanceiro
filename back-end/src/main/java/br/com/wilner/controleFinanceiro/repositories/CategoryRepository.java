@@ -1,6 +1,6 @@
 package br.com.wilner.controleFinanceiro.repositories;
 
-import br.com.wilner.controleFinanceiro.entities.Category;
+import br.com.wilner.controleFinanceiro.entities.Category.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

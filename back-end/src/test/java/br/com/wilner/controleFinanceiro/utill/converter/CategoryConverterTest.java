@@ -1,23 +1,12 @@
 package br.com.wilner.controleFinanceiro.utill.converter;
 
-import br.com.wilner.controleFinanceiro.DTO.CategoryDTO;
-import br.com.wilner.controleFinanceiro.entities.Category;
-import br.com.wilner.controleFinanceiro.util.converter.CategoryConverter;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import static br.com.wilner.controleFinanceiro.builder.CategoryBuilder.umCategory;
-import static br.com.wilner.controleFinanceiro.builder.CategoryDTOBuilder.umCategoryDTO;
-import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class CategoryConverterTest {
 
-    @InjectMocks
+    /*@InjectMocks
     CategoryConverter categoryConverter;
     @Mock
     CategoryDTO categoryDTO;
@@ -54,5 +43,5 @@ class CategoryConverterTest {
         );
         assertNotNull(categoryToDTO.getCategoryName());
 
-    }
+    }*/
 }

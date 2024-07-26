@@ -1,6 +1,6 @@
 package br.com.wilner.controleFinanceiro.services.ValidationSerice;
 
-import br.com.wilner.controleFinanceiro.entities.Transaction;
+import br.com.wilner.controleFinanceiro.entities.Transaction.Transaction;
 import br.com.wilner.controleFinanceiro.exception.ValidationException;
 import org.springframework.stereotype.Component;
 

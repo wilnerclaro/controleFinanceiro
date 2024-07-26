@@ -1,5 +1,6 @@
-package br.com.wilner.controleFinanceiro.entities;
+package br.com.wilner.controleFinanceiro.entities.User;
 
+import br.com.wilner.controleFinanceiro.entities.Transaction.Transaction;
 import br.com.wilner.controleFinanceiro.util.UserStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;

@@ -1,6 +1,6 @@
 package br.com.wilner.controleFinanceiro.repositories;
 
-import br.com.wilner.controleFinanceiro.entities.Transaction;
+import br.com.wilner.controleFinanceiro.entities.Transaction.Transaction;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

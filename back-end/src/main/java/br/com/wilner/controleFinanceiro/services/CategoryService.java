@@ -1,13 +1,14 @@
 package br.com.wilner.controleFinanceiro.services;
 
 import br.com.wilner.controleFinanceiro.DTO.CategoryDTO;
-import br.com.wilner.controleFinanceiro.entities.Category;
+import br.com.wilner.controleFinanceiro.entities.Category.Category;
+import br.com.wilner.controleFinanceiro.entities.Category.CategoryRequestDTO;
+import br.com.wilner.controleFinanceiro.entities.Category.CategoryResponseDTO;
 import br.com.wilner.controleFinanceiro.exception.ValidationException;
 import br.com.wilner.controleFinanceiro.repositories.CategoryRepository;
 import br.com.wilner.controleFinanceiro.services.SoftDeletes.DeactivationService;
 import br.com.wilner.controleFinanceiro.services.ValidationSerice.CategoryValidationService;
 import br.com.wilner.controleFinanceiro.util.converter.CategoryConverter;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +25,7 @@ public class CategoryService implements DeactivationService {
     private final CategoryConverter categoryConverter;
     private final CategoryValidationService categoryValidationService;
 
-    public CategoryDTO saveCategory(CategoryDTO categoryDTO) {
+    public CategoryResponseDTO saveCategory(CategoryRequestDTO categoryDTO) {
 
         Category category = categoryConverter.converterToEntity(categoryDTO);
         categoryValidationService.checkValidFields(category);
@@ -36,7 +37,7 @@ public class CategoryService implements DeactivationService {
         }
     }
 
-    public List<CategoryDTO> getAllCategories() {
+    public List<CategoryResponseDTO> getAllCategories() {
         List<Category> categories = new ArrayList<>();
         try {
             categories = categoryRepository.findByIsActive(true);
@@ -49,7 +50,7 @@ public class CategoryService implements DeactivationService {
         }
     }
 
-    public CategoryDTO getCategoryByName(String name) {
+    public CategoryResponseDTO getCategoryByName(String name) {
         Category categoryName = categoryRepository.findByNameAndIsActive(name, true)
                 .orElseThrow(() -> new ValidationException("Categoria não encontrada " + name));
         return categoryConverter.converterToDTO(categoryName);
@@ -60,7 +61,7 @@ public class CategoryService implements DeactivationService {
     @Override
     public void deactivationService(String name) {
         Category category = categoryRepository.findByNameAndIsActive(name, true)
-                .orElseThrow(() -> new EntityNotFoundException("Categoria não encontrada "));
+                .orElseThrow(() -> new ValidationException("Categoria não encontrada "));
         category.setIsActive(false);
         category.setUpdateDate(LocalDateTime.now());
         categoryRepository.save(category);
@@ -69,7 +70,7 @@ public class CategoryService implements DeactivationService {
     public CategoryDTO calculateTotalsForCategory(String categoryName) {
         List<Object[]> results = categoryRepository.findTotalsByCategoryNameNative(categoryName);
         if (results.isEmpty()) {
-            throw new EntityNotFoundException("Categoria não encontrada ou sem transações: " + categoryName);
+            throw new ValidationException("Categoria não encontrada ou sem transações: " + categoryName);
         }
         Object[] result = results.get(0);
         return new CategoryDTO(

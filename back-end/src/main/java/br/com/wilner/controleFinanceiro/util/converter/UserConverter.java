@@ -1,7 +1,7 @@
 package br.com.wilner.controleFinanceiro.util.converter;
 
 import br.com.wilner.controleFinanceiro.DTO.UserDTO;
-import br.com.wilner.controleFinanceiro.entities.User;
+import br.com.wilner.controleFinanceiro.entities.User.User;
 import br.com.wilner.controleFinanceiro.util.UserStatus;
 import org.springframework.stereotype.Component;
 

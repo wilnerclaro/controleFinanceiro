@@ -1,5 +1,7 @@
-package br.com.wilner.controleFinanceiro.entities;
+package br.com.wilner.controleFinanceiro.entities.Transaction;
 
+import br.com.wilner.controleFinanceiro.entities.Category.Category;
+import br.com.wilner.controleFinanceiro.entities.User.User;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;

@@ -1,7 +1,7 @@
 package br.com.wilner.controleFinanceiro.builder;
 
 
-import br.com.wilner.controleFinanceiro.DTO.CategoryDTO;
+import br.com.wilner.controleFinanceiro.entities.Category.CategoryRequestDTO;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -25,7 +25,7 @@ public class BuilderMaster {
     }
 
     public static void main(String[] args) {
-        new BuilderMaster().gerarCodigoClasse(CategoryDTO.class);
+        new BuilderMaster().gerarCodigoClasse(CategoryRequestDTO.class);
     }
 
     @SuppressWarnings("rawtypes")

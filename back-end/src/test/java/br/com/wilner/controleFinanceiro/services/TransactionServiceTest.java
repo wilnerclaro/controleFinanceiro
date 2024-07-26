@@ -1,7 +1,7 @@
 package br.com.wilner.controleFinanceiro.services;
 
 import br.com.wilner.controleFinanceiro.DTO.TransactionDTO;
-import br.com.wilner.controleFinanceiro.entities.Transaction;
+import br.com.wilner.controleFinanceiro.entities.Transaction.Transaction;
 import br.com.wilner.controleFinanceiro.exception.ValidationException;
 import br.com.wilner.controleFinanceiro.repositories.TransactionRepository;
 import br.com.wilner.controleFinanceiro.services.ValidationSerice.TransactionValidationService;

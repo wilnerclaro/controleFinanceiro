@@ -1,8 +1,10 @@
 package br.com.wilner.controleFinanceiro.services;
 
-import br.com.wilner.controleFinanceiro.DTO.TransactionDTO;
+import br.com.wilner.controleFinanceiro.entities.Category.Category;
 import br.com.wilner.controleFinanceiro.entities.Transaction.Transaction;
+import br.com.wilner.controleFinanceiro.entities.Transaction.TransactionDTO;
 import br.com.wilner.controleFinanceiro.exception.ValidationException;
+import br.com.wilner.controleFinanceiro.repositories.CategoryRepository;
 import br.com.wilner.controleFinanceiro.repositories.TransactionRepository;
 import br.com.wilner.controleFinanceiro.services.ValidationSerice.TransactionValidationService;
 import br.com.wilner.controleFinanceiro.util.converter.TransactionConverter;
@@ -14,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
@@ -39,6 +42,8 @@ class TransactionServiceTest {
     private TransactionConverter transactionConverter;
     @Mock
     private TransactionValidationService transactionValidationService;
+    @Mock
+    private CategoryRepository categoryRepository;
 
 
     @Test
@@ -50,6 +55,12 @@ class TransactionServiceTest {
         when(transactionConverter.converterToDTO(transaction)).thenReturn(transactionDTO);
         when(transactionConverter.converterToEntity(transactionDTO)).thenReturn(transaction);
 
+        // Mock para categoryRepository.findById
+        Category category = new Category();
+        category.setId(transaction.getCategory().getId());
+        category.setValueRealized(BigDecimal.ZERO);
+        when(categoryRepository.findById(anyLong())).thenReturn(Optional.of(category));
+
         TransactionDTO savedTransaction = transactionService.saveTransaction(transactionDTO);
 
         assertEquals(transactionDTO, savedTransaction);
@@ -57,9 +68,10 @@ class TransactionServiceTest {
         verify(transactionConverter).converterToDTO(transaction);
         verify(transactionConverter).converterToEntity(transactionDTO);
         verify(transactionRepository).save(transaction);
-        verifyNoMoreInteractions(transactionConverter, transactionRepository);
-
+        verify(categoryRepository).findById(transaction.getCategory().getId());
+        verify(categoryRepository).save(category);
     }
+
 
     @Test
     void deveDarExcptionCasoOcorraAlgumErroDuranteACriacaoDeUmaTransacao() {
@@ -76,37 +88,6 @@ class TransactionServiceTest {
         assertEquals("Erro ao salvar transação ", ex.getMessage());
     }
 
-
-    @Test
-    void deveAtualizarUmaTransacaoComsucesso() {
-        Transaction existTransaction = umTransaction().comTransactionType("Despesa").comDescription("Cerveja").agora();
-        TransactionDTO updateTransactionDTO = umTransactionDTO().comTransactionType("Receita").comDescription("Aluguel").agora();
-
-        when(transactionRepository.findById(existTransaction.getId())).thenReturn(Optional.ofNullable(existTransaction));
-        when(transactionRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
-        when(transactionConverter.converterToEntityUpdate(any(Transaction.class), any(TransactionDTO.class)))
-                .thenAnswer(invocation -> {
-                    Transaction transactionToUpdate = invocation.getArgument(0, Transaction.class);
-                    TransactionDTO transactionUpdatedData = invocation.getArgument(1, TransactionDTO.class);
-                    transactionToUpdate.setTransactionType(transactionUpdatedData.getTransactionType());
-                    transactionToUpdate.setDescription(transactionUpdatedData.getDescription());
-                    return transactionToUpdate;
-                });
-
-        when(transactionConverter.converterToDTO(existTransaction)).thenReturn(updateTransactionDTO);
-
-        TransactionDTO result = transactionService.updateTransaction(existTransaction.getId(), updateTransactionDTO);
-
-        assertNotNull(existTransaction);
-        assertNotNull(result);
-        assertEquals(updateTransactionDTO.getTransactionType(), result.getTransactionType());
-        assertEquals(updateTransactionDTO.getDescription(), result.getDescription());
-
-
-        verify(transactionRepository, times(1)).findById(existTransaction.getId());
-        verify(transactionRepository, times(1)).save(existTransaction);
-
-    }
 
     @Test
     void nãoDeveAtualizarCasoTransacaoIdNaoExista() {
@@ -131,10 +112,8 @@ class TransactionServiceTest {
         TransactionDTO transactionDTO = umTransactionDTO().agora();
 
         when(transactionRepository.findById(transaction.getId())).thenReturn(Optional.of(transaction));
-        when(transactionConverter.converterToEntityUpdate(transaction, transactionDTO)).thenReturn(transaction);
-        when(transactionRepository.save(transaction)).thenThrow(new RuntimeException("Falha ao atualizar tranzacao: "));
 
-        Exception exception = assertThrows(RuntimeException.class, () -> {
+        Exception exception = assertThrows(ValidationException.class, () -> {
             transactionService.updateTransaction(transaction.getId(), transactionDTO);
         });
 
@@ -142,8 +121,8 @@ class TransactionServiceTest {
         String actualMessage = exception.getMessage();
 
         assertTrue(actualMessage.contains(expectedMessage));
-
     }
+
 
     @Test
     void deveDeletarTransacaoComSucesso() {

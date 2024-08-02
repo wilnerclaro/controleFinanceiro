@@ -1,6 +1,6 @@
 package br.com.wilner.controleFinanceiro.util.converter;
 
-import br.com.wilner.controleFinanceiro.DTO.TransactionDTO;
+import br.com.wilner.controleFinanceiro.entities.Transaction.TransactionDTO;
 import br.com.wilner.controleFinanceiro.entities.Category.Category;
 import br.com.wilner.controleFinanceiro.entities.Transaction.Transaction;
 import br.com.wilner.controleFinanceiro.entities.User.User;
@@ -33,8 +33,6 @@ public class TransactionConverter {
                 .user(findUser(dto))
                 .category(findCategory(dto))
                 .paymentMethod(dto.getPaymentMethod())
-                .transactionValueExpected(dto.getTransactionValueExpected())
-                .transactionValueRealized(dto.getTransactionValue())
                 .build();
     }
 
@@ -48,8 +46,6 @@ public class TransactionConverter {
                 .userName(transaction.getUser().getName())
                 .categoryName(transaction.getCategory().getName())
                 .paymentMethod(transaction.getPaymentMethod())
-                .transactionValueRealized(transaction.getTransactionValueRealized())
-                .transactionValueExpected(transaction.getTransactionValueExpected())
                 .build();
     }
 
@@ -63,8 +59,6 @@ public class TransactionConverter {
                 .user(findUser(dto))
                 .category(findCategory(dto))
                 .paymentMethod(dto.getPaymentMethod() != null ? dto.getPaymentMethod() : transaction.getPaymentMethod())
-                .transactionValueRealized(dto.getTransactionValueRealized() != null ? dto.getTransactionValueRealized() : transaction.getTransactionValueRealized())
-                .transactionValueExpected(dto.getTransactionValueExpected() != null ? dto.getTransactionValueExpected() : transaction.getTransactionValueExpected())
                 .build();
 
     }

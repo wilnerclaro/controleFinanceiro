@@ -1,6 +1,6 @@
 package br.com.wilner.controleFinanceiro.utill.converter;
 
-import br.com.wilner.controleFinanceiro.DTO.TransactionDTO;
+import br.com.wilner.controleFinanceiro.entities.Transaction.TransactionDTO;
 import br.com.wilner.controleFinanceiro.entities.Category.Category;
 import br.com.wilner.controleFinanceiro.entities.Transaction.Transaction;
 import br.com.wilner.controleFinanceiro.entities.User.User;

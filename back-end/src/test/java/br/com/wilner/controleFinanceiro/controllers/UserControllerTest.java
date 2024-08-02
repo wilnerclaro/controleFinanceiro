@@ -1,6 +1,6 @@
 package br.com.wilner.controleFinanceiro.controllers;
 
-import br.com.wilner.controleFinanceiro.DTO.UserDTO;
+import br.com.wilner.controleFinanceiro.entities.User.UserDTO;
 import br.com.wilner.controleFinanceiro.services.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -85,7 +85,7 @@ class UserControllerTest {
         String userName = "Teste";
         when(userService.updateUser(eq(userName), any(UserDTO.class))).thenReturn(new UserDTO());
 
-        mockMvc.perform(put(url + "/update")
+        mockMvc.perform(patch(url + "/update")
                         .param("name", userName)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json)

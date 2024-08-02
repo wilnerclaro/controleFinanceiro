@@ -34,8 +34,7 @@ public class TransactionBuilder {
         elemento.setDescription("Gasto com Aluguel");
         elemento.setUser(UserBuilder.umUser().agora());
         elemento.setPaymentMethod("Pix");
-        elemento.setTransactionValueExpected(BigDecimal.valueOf(100));
-        elemento.setTransactionValueRealized(BigDecimal.valueOf(100));
+
     }
 
     public TransactionBuilder comId(Long param) {
@@ -80,16 +79,6 @@ public class TransactionBuilder {
 
     public TransactionBuilder comPaymentMethod(String param) {
         elemento.setPaymentMethod(param);
-        return this;
-    }
-
-    public TransactionBuilder comTransactionValueExpected(BigDecimal param) {
-        elemento.setTransactionValueExpected(param);
-        return this;
-    }
-
-    public TransactionBuilder comTransactionValueRealized(BigDecimal param) {
-        elemento.setTransactionValueRealized(param);
         return this;
     }
 

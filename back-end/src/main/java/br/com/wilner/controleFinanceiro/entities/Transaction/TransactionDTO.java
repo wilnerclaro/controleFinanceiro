@@ -1,4 +1,4 @@
-package br.com.wilner.controleFinanceiro.DTO;
+package br.com.wilner.controleFinanceiro.entities.Transaction;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
@@ -25,9 +25,5 @@ public class TransactionDTO {
     private String userName;
     @JsonProperty(value = "FORMA_PAGAMENTO")
     private String paymentMethod;
-    @JsonProperty(value = "VALOR_PREVISTO")
-    private BigDecimal transactionValueExpected;
-    @JsonProperty(value = "VALOR_REALIZADO")
-    private BigDecimal transactionValueRealized;
 
 }

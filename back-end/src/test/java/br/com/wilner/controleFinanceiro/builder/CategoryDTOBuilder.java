@@ -1,6 +1,6 @@
 package br.com.wilner.controleFinanceiro.builder;
 
-import br.com.wilner.controleFinanceiro.DTO.CategoryDTO;
+import br.com.wilner.controleFinanceiro.entities.Category.CategoryDTO;
 
 import java.math.BigDecimal;
 

@@ -1,6 +1,6 @@
 package br.com.wilner.controleFinanceiro.controllers;
 
-import br.com.wilner.controleFinanceiro.DTO.TransactionDTO;
+import br.com.wilner.controleFinanceiro.entities.Transaction.TransactionDTO;
 import br.com.wilner.controleFinanceiro.services.TransactionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -31,12 +31,12 @@ public class TransactionController {
         return ResponseEntity.status(HttpStatus.CREATED).body(transactionService.saveTransaction(transactionDTO));
     }
 
-    @Operation(summary = "Fazer um update de uma transacao", method = "PUT")
+    @Operation(summary = "Fazer um update de uma transacao", method = "PATCH")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Trasação atuaizada com sucesso"),
             @ApiResponse(responseCode = "500", description = "Erro ao  realizar busca dos dados")
     })
-    @PutMapping("/update")
+    @PatchMapping("/update")
     public ResponseEntity<TransactionDTO> updateTransaction(@RequestParam Long id, @RequestBody TransactionDTO transactionDTO) {
         return ResponseEntity.ok(transactionService.updateTransaction(id, transactionDTO));
     }

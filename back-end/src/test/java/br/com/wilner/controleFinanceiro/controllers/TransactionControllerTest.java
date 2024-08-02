@@ -1,7 +1,7 @@
 package br.com.wilner.controleFinanceiro.controllers;
 
-import br.com.wilner.controleFinanceiro.DTO.TransactionDTO;
 import br.com.wilner.controleFinanceiro.builder.TransactionDTOBuilder;
+import br.com.wilner.controleFinanceiro.entities.Transaction.TransactionDTO;
 import br.com.wilner.controleFinanceiro.services.TransactionService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -75,7 +75,7 @@ class TransactionControllerTest {
         Long transactionID = 1L;
         when(transactionService.updateTransaction(eq(transactionID), any(TransactionDTO.class))).thenReturn(new TransactionDTO());
 
-        mockMvc.perform(put(url + "/update")
+        mockMvc.perform(patch(url + "/update")
                         .param("id", transactionID.toString())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json)

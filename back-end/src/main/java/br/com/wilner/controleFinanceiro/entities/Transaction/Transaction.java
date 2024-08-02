@@ -42,8 +42,4 @@ public class Transaction {
     private User user;
     @Column(name = "FORMA_PAGAMENTO")
     private String paymentMethod;
-    @Column(name = "VALOR_PREVISTO")
-    private BigDecimal transactionValueExpected;
-    @Column(name = "VALOR_REALIZADO")
-    private BigDecimal transactionValueRealized;
 }

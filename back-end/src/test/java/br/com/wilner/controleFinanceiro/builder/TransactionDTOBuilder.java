@@ -1,6 +1,6 @@
 package br.com.wilner.controleFinanceiro.builder;
 
-import br.com.wilner.controleFinanceiro.DTO.TransactionDTO;
+import br.com.wilner.controleFinanceiro.entities.Transaction.TransactionDTO;
 
 import java.math.BigDecimal;
 
@@ -28,8 +28,7 @@ public class TransactionDTOBuilder {
         elemento.setDescription("Gasto com Aluguel");
         elemento.setUserName("Novo Usuário");
         elemento.setPaymentMethod("Pix");
-        elemento.setTransactionValueExpected(BigDecimal.valueOf(100));
-        elemento.setTransactionValueRealized(BigDecimal.valueOf(100));
+
     }
 
     public TransactionDTOBuilder comTransactionType(String param) {
@@ -59,16 +58,6 @@ public class TransactionDTOBuilder {
 
     public TransactionDTOBuilder comPaymentMethod(String param) {
         elemento.setPaymentMethod(param);
-        return this;
-    }
-
-    public TransactionDTOBuilder comTransactionValueExpected(BigDecimal param) {
-        elemento.setTransactionValueExpected(param);
-        return this;
-    }
-
-    public TransactionDTOBuilder comTransactionValueRealized(BigDecimal param) {
-        elemento.setTransactionValueRealized(param);
         return this;
     }
 

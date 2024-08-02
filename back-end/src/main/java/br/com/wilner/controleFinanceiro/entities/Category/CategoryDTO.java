@@ -1,4 +1,4 @@
-package br.com.wilner.controleFinanceiro.DTO;
+package br.com.wilner.controleFinanceiro.entities.Category;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
@@ -19,7 +19,7 @@ public class CategoryDTO {
     @JsonProperty(value = "TOTAL_PREVISTO")
     private BigDecimal totalPredicted;
     @JsonProperty(value = "TOTAL_REALIZADO")
-        private BigDecimal totalRealized;
+    private BigDecimal totalRealized;
 
     public CategoryDTO(String categoryName, BigDecimal totalPredicted, BigDecimal totalRealized) {
         this.categoryName = categoryName;

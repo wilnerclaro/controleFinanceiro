@@ -1,6 +1,6 @@
 package br.com.wilner.controleFinanceiro.controllers;
 
-import br.com.wilner.controleFinanceiro.DTO.UserDTO;
+import br.com.wilner.controleFinanceiro.entities.User.UserDTO;
 import br.com.wilner.controleFinanceiro.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -50,12 +50,12 @@ public class UserController {
         return ResponseEntity.ok(userService.saveUser(userDTO));
     }
 
-    @Operation(summary = "Fazer um update de um usuario", method = "PUT")
+    @Operation(summary = "Fazer um update de um usuario", method = "PATCH")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Usuario atuaizado com sucesso"),
             @ApiResponse(responseCode = "500", description = "Erro ao  realizar busca dos dados")
     })
-    @PutMapping("/update")
+    @PatchMapping("/update")
     public ResponseEntity<UserDTO> updateUser(@RequestParam String name, @RequestBody UserDTO userDto) {
         return ResponseEntity.ok(userService.updateUser(name, userDto));
     }

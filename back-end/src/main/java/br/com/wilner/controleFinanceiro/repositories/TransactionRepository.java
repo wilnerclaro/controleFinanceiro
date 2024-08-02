@@ -18,4 +18,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 
     @Query("SELECT t FROM Transaction t WHERE t.category.name = :categoryName AND t.transactionDate BETWEEN :startOfDay AND :endOfDay")
     List<Transaction> findByCategoryNameAndTransactionDateBetween(String categoryName, LocalDateTime startOfDay, LocalDateTime endOfDay);
+
+    List<Transaction> findByCategoryId(Long categoryId);
 }

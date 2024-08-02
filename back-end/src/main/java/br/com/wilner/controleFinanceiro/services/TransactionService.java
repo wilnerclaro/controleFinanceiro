@@ -1,8 +1,10 @@
 package br.com.wilner.controleFinanceiro.services;
 
-import br.com.wilner.controleFinanceiro.DTO.TransactionDTO;
+import br.com.wilner.controleFinanceiro.entities.Category.Category;
 import br.com.wilner.controleFinanceiro.entities.Transaction.Transaction;
+import br.com.wilner.controleFinanceiro.entities.Transaction.TransactionDTO;
 import br.com.wilner.controleFinanceiro.exception.ValidationException;
+import br.com.wilner.controleFinanceiro.repositories.CategoryRepository;
 import br.com.wilner.controleFinanceiro.repositories.TransactionRepository;
 import br.com.wilner.controleFinanceiro.services.ValidationSerice.TransactionValidationService;
 import br.com.wilner.controleFinanceiro.util.converter.TransactionConverter;
@@ -10,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,6 +25,7 @@ public class TransactionService {
     private final TransactionRepository transactionRepository;
     private final TransactionConverter transactionConverter;
     private final TransactionValidationService transactionValidationService;
+    private final CategoryRepository categoryRepository;
 
     public TransactionDTO saveTransaction(TransactionDTO transactionDTO) {
         Transaction transaction = transactionConverter.converterToEntity(transactionDTO);
@@ -29,10 +33,23 @@ public class TransactionService {
 
         try {
             Transaction savedTransaction = transactionRepository.save(transaction);
+            updateCategoryValueRealized(transaction.getCategory().getId());
             return transactionConverter.converterToDTO(savedTransaction);
         } catch (Exception e) {
-            throw new ValidationException("Erro ao salvar transação ");
+            throw new ValidationException("Erro ao salvar transação ", e);
         }
+    }
+
+    private void updateCategoryValueRealized(Long categoryId) {
+        Category category = categoryRepository.findById(categoryId).orElseThrow(
+                () -> new ValidationException("Categoria não encontrada: " + categoryId));
+        BigDecimal totalRealized = transactionRepository.findByCategoryId(categoryId).stream()
+                .map(Transaction::getTransactionValue)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        category.setValueRealized(totalRealized);
+        categoryRepository.save(category);
+
     }
 
 
@@ -40,11 +57,12 @@ public class TransactionService {
         try {
             Transaction transactionById = transactionRepository.findById(id).orElseThrow(() -> new ValidationException("Transação não encontrada " + id));
             transactionById = transactionConverter.converterToEntityUpdate(transactionById, updateTransactionDTO);
+            updateCategoryValueRealized(transactionById.getCategory().getId());
             return transactionConverter.converterToDTO(transactionRepository.save(transactionById));
         } catch (ValidationException e) {
             throw e;
         } catch (Exception e) {
-            throw new RuntimeException("Falha ao atualizar tranzacao: " + id, e);
+            throw new ValidationException("Falha ao atualizar tranzacao: " + id, e);
         }
     }
 
@@ -54,7 +72,7 @@ public class TransactionService {
         } catch (EmptyResultDataAccessException e) {
             throw new ValidationException("Transação não encontrada: " + id);
         } catch (Exception e) {
-            throw new RuntimeException("Erro ao deletar transação: " + id, e);
+            throw new ValidationException("Erro ao deletar transação: " + id, e);
         }
     }
 

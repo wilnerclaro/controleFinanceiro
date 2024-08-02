@@ -1,6 +1,6 @@
 package br.com.wilner.controleFinanceiro.utill.converter;
 
-import br.com.wilner.controleFinanceiro.DTO.UserDTO;
+import br.com.wilner.controleFinanceiro.entities.User.UserDTO;
 import br.com.wilner.controleFinanceiro.entities.User.User;
 import br.com.wilner.controleFinanceiro.util.converter.UserConverter;
 import org.junit.jupiter.api.Test;

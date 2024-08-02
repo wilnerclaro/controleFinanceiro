@@ -1,4 +1,4 @@
-package br.com.wilner.controleFinanceiro.DTO;
+package br.com.wilner.controleFinanceiro.entities.User;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;

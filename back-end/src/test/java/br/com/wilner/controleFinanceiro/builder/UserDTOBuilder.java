@@ -1,6 +1,6 @@
 package br.com.wilner.controleFinanceiro.builder;
 
-import br.com.wilner.controleFinanceiro.DTO.UserDTO;
+import br.com.wilner.controleFinanceiro.entities.User.UserDTO;
 
 
 public class UserDTOBuilder {

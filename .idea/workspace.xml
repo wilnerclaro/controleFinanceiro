@@ -17,6 +17,7 @@
       <list>
         <option value="Interface" />
         <option value="Class" />
+        <option value="Record" />
       </list>
     </option>
   </component>
@@ -72,9 +73,14 @@
     "JUnit.controllers in controleFinanceiro.executor": "Run",
     "JUnit.services in controleFinanceiro.executor": "Run",
     "Maven.controleFinanceiro [test].executor": "Run",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SONARLINT_PRECOMMIT_ANALYSIS": "true",
+    "Spring Boot.ControleFinanceiroApplication.executor": "Debug",
     "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "D:/Projetos/controleFinanceiro/back-end",
@@ -91,11 +97,14 @@
   }
 }]]></component>
   <component name="RecentsManager">
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="br.com.wilner.controleFinanceiro.entities.Category" />
+    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\Projetos\controleFinanceiro\src\main\resources" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.TransactionServiceTest.deveCriarUmaTransacaoComSucesso">
+  <component name="RunManager" selected="Spring Boot.ControleFinanceiroApplication">
     <configuration name="TransactionServiceTest.deveAtualizarUmaTransacaoComsucesso" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="controleFinanceiro" />
       <extension name="coverage">
@@ -144,14 +153,6 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="controllers in controleFinanceiro" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="controleFinanceiro" />
-      <option name="TEST_OBJECT" value="directory" />
-      <dir value="$PROJECT_DIR$/back-end/src/test/java/br/com/wilner/controleFinanceiro/controllers" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="services in controleFinanceiro" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="controleFinanceiro" />
       <option name="TEST_OBJECT" value="directory" />
@@ -160,13 +161,26 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="ControleFinanceiroApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+      <module name="controleFinanceiro" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="br.com.wilner.controleFinanceiro.ControleFinanceiroApplication" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="br.com.wilner.controleFinanceiro.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Spring Boot.ControleFinanceiroApplication" />
         <item itemvalue="JUnit.TransactionServiceTest.deveCriarUmaTransacaoComSucesso" />
         <item itemvalue="JUnit.TransactionServiceTest.deveAtualizarUmaTransacaoComsucesso" />
         <item itemvalue="JUnit.TransactionServiceTest.deveLancarExceptionCasoOcorraAlgumErroDuranteAtualizacaoTransaction" />
         <item itemvalue="JUnit.services in controleFinanceiro" />
-        <item itemvalue="JUnit.controllers in controleFinanceiro" />
       </list>
     </recent_temporary>
   </component>
@@ -190,7 +204,7 @@
       <workItem from="1722263906944" duration="173000" />
       <workItem from="1722286339293" duration="9562000" />
       <workItem from="1722458361941" duration="4881000" />
-      <workItem from="1722564942198" duration="4156000" />
+      <workItem from="1722564942198" duration="8426000" />
     </task>
     <task id="LOCAL-00001" summary="ajuste git">
       <option name="closed" value="true" />

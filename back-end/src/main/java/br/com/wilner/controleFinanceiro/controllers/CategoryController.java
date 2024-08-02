@@ -3,6 +3,7 @@ package br.com.wilner.controleFinanceiro.controllers;
 import br.com.wilner.controleFinanceiro.entities.Category.CategoryDTO;
 import br.com.wilner.controleFinanceiro.entities.Category.CategoryRequestDTO;
 import br.com.wilner.controleFinanceiro.entities.Category.CategoryResponseDTO;
+import br.com.wilner.controleFinanceiro.entities.Category.CategoryTotals;
 import br.com.wilner.controleFinanceiro.services.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -63,8 +64,8 @@ public class CategoryController {
     }
 
     @GetMapping("/totals/categoryName")
-    public ResponseEntity<CategoryDTO> getCategoryTotals(@RequestParam String categoryName) {
-        CategoryDTO categoryTotals = categoryService.calculateTotalsForCategory(categoryName);
+    public ResponseEntity<CategoryTotals> getCategoryTotals(@RequestParam String categoryName) {
+        CategoryTotals categoryTotals = categoryService.calculateTotalsForCategory(categoryName);
         return ResponseEntity.ok(categoryTotals);
     }
 }

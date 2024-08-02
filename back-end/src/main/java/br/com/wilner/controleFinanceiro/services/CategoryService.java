@@ -1,9 +1,9 @@
 package br.com.wilner.controleFinanceiro.services;
 
-import br.com.wilner.controleFinanceiro.entities.Category.CategoryDTO;
 import br.com.wilner.controleFinanceiro.entities.Category.Category;
 import br.com.wilner.controleFinanceiro.entities.Category.CategoryRequestDTO;
 import br.com.wilner.controleFinanceiro.entities.Category.CategoryResponseDTO;
+import br.com.wilner.controleFinanceiro.entities.Category.CategoryTotals;
 import br.com.wilner.controleFinanceiro.exception.ValidationException;
 import br.com.wilner.controleFinanceiro.repositories.CategoryRepository;
 import br.com.wilner.controleFinanceiro.services.SoftDeletes.DeactivationService;
@@ -67,17 +67,18 @@ public class CategoryService implements DeactivationService {
         categoryRepository.save(category);
     }
 
-    public CategoryDTO calculateTotalsForCategory(String categoryName) {
+    public CategoryTotals calculateTotalsForCategory(String categoryName) {
         List<Object[]> results = categoryRepository.findTotalsByCategoryNameNative(categoryName);
         if (results.isEmpty()) {
             throw new ValidationException("Categoria não encontrada ou sem transações: " + categoryName);
         }
         Object[] result = results.get(0);
-        return new CategoryDTO(
+        return new CategoryTotals(
                 (String) result[0],
                 (BigDecimal) result[1],
                 (BigDecimal) result[2]
         );
     }
-
 }
+
+

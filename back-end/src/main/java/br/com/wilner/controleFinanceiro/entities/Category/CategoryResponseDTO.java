@@ -7,4 +7,7 @@ import java.math.BigDecimal;
 @Builder
 public record CategoryResponseDTO(String name, String description, Boolean isActive, BigDecimal valueRealized,
                                   BigDecimal valueExpected) {
+
+    public void CategorySum(String name, BigDecimal bigDecimal, BigDecimal bigDecimal1) {
+    }
 }

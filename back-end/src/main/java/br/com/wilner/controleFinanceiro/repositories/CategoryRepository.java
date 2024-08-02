@@ -15,7 +15,7 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 
     Optional<Category> findByNameAndIsActive(String name, Boolean isActive);
 
-    @Query(value = "SELECT C.NOME,SUM(T.VALOR_PREVISTO), SUM(T.VALOR_REALIZADO) FROM CATEGORIAS C,TRANSACOES T\n" +
+    @Query(value = "SELECT C.NOME,SUM(C.VALOR_PREVISTO), SUM(C.VALOR_REALIZADO) FROM CATEGORIAS C,TRANSACOES T\n" +
             "WHERE C.ID = T.CATEGORIA_ID " +
             "AND C.NOME = :categoryName " +
             "GROUP BY c.nome", nativeQuery = true)

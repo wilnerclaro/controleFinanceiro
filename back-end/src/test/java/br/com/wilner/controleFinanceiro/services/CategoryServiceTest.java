@@ -1,6 +1,5 @@
 package br.com.wilner.controleFinanceiro.services;
 
-import br.com.wilner.controleFinanceiro.entities.Category.CategoryDTO;
 import br.com.wilner.controleFinanceiro.builder.CategoryBuilder;
 import br.com.wilner.controleFinanceiro.entities.Category.Category;
 import br.com.wilner.controleFinanceiro.entities.Category.CategoryRequestDTO;

@@ -35,7 +35,7 @@ public class Category {
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Transaction> transactions;
     @Column(name = "IS_ACTIVE")
-    private Boolean isActive = true;
+    private Boolean isActive;
     @Column(name = "valor_previsto")
     private BigDecimal valueExpected;
     @Column(name = "valor_realizado")

@@ -8,3 +8,4 @@ import java.math.BigDecimal;
 public record CategoryTotals(String categoryName, BigDecimal totalExpected, BigDecimal totalRealized) {
 }
 
+

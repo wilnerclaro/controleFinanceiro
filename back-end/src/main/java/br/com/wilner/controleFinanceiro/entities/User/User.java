@@ -4,6 +4,7 @@ import br.com.wilner.controleFinanceiro.entities.Transaction.Transaction;
 import br.com.wilner.controleFinanceiro.util.UserStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -29,7 +30,8 @@ public class User {
     @Column(name = "name")
     private String name;
     @Column(name = "email")
-    @Email
+    @NotNull
+    @Email(message = "E-mail inválido")
     private String email;
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
@@ -40,7 +42,7 @@ public class User {
     @Column(name = "data_atualizacao")
     @LastModifiedDate
     private LocalDateTime updateDate;
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Transaction> transactions = new ArrayList<>();
 
 

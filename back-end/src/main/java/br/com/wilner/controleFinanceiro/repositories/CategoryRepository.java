@@ -1,6 +1,7 @@
 package br.com.wilner.controleFinanceiro.repositories;
 
 import br.com.wilner.controleFinanceiro.entities.Category.Category;
+import br.com.wilner.controleFinanceiro.entities.Category.CategoryTotals;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,7 +20,7 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
             "WHERE C.ID = T.CATEGORIA_ID " +
             "AND C.NOME = :categoryName " +
             "GROUP BY c.nome", nativeQuery = true)
-    List<Object[]> findTotalsByCategoryNameNative(@Param("categoryName") String categoryName);
+    Optional<CategoryTotals> findTotalsByCategoryName(@Param("categoryName") String categoryName);
 
 
 }

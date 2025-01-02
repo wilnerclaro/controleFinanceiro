@@ -12,10 +12,10 @@ public class CategoryConverter {
 
     public Category converterToEntity(CategoryRequestDTO categoryDTO) {
         return Category.builder()
-                .name(categoryDTO.name())
+                .name(categoryDTO.name().toUpperCase())
                 .creationDate(LocalDateTime.now())
                 .isActive(true)
-                .description(categoryDTO.description())
+                .description(categoryDTO.description().toUpperCase())
                 .valueExpected(categoryDTO.valueExpected())
                 .build();
     }

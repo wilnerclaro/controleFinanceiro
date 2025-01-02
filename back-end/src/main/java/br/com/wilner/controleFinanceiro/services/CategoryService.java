@@ -9,16 +9,20 @@ import br.com.wilner.controleFinanceiro.repositories.CategoryRepository;
 import br.com.wilner.controleFinanceiro.services.SoftDeletes.DeactivationService;
 import br.com.wilner.controleFinanceiro.services.ValidationSerice.CategoryValidationService;
 import br.com.wilner.controleFinanceiro.util.converter.CategoryConverter;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
+
 public class CategoryService implements DeactivationService {
 
     private final CategoryRepository categoryRepository;
@@ -30,10 +34,9 @@ public class CategoryService implements DeactivationService {
         Category category = categoryConverter.converterToEntity(categoryDTO);
         categoryValidationService.checkValidFields(category);
         try {
-            Category savedCategory = categoryRepository.save(category);
-            return categoryConverter.converterToDTO(savedCategory);
-        } catch (Exception e) {
-            throw new ValidationException("Erro ao Salvar Categoria");
+            return categoryConverter.converterToDTO(categoryRepository.save(category));
+        } catch (DataIntegrityViolationException e) {
+            throw new ValidationException("Erro ao Salvar Categoria: dados duplicados");
         }
     }
 
@@ -67,17 +70,15 @@ public class CategoryService implements DeactivationService {
         categoryRepository.save(category);
     }
 
+    @Transactional
     public CategoryTotals calculateTotalsForCategory(String categoryName) {
-        List<Object[]> results = categoryRepository.findTotalsByCategoryNameNative(categoryName);
-        if (results.isEmpty()) {
-            throw new ValidationException("Categoria não encontrada ou sem transações: " + categoryName);
-        }
-        Object[] result = results.get(0);
-        return new CategoryTotals(
-                (String) result[0],
-                (BigDecimal) result[1],
-                (BigDecimal) result[2]
-        );
+        log.info("Calculando totais para a categoria: {}", categoryName);
+
+        return categoryRepository.findTotalsByCategoryName(categoryName)
+                .orElseThrow(() -> {
+                    log.warn("Categoria não encontrada ou sem transações: {}", categoryName);
+                    return new ValidationException("Categoria não encontrada ou sem transações: " + categoryName);
+                });
     }
 }
 

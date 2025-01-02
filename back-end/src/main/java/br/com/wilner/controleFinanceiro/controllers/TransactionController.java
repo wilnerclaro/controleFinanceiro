@@ -5,6 +5,7 @@ import br.com.wilner.controleFinanceiro.services.TransactionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -27,7 +28,7 @@ public class TransactionController {
             @ApiResponse(responseCode = "500", description = "Erro ao  salvar transação")
     })
     @PostMapping("/new")
-    public ResponseEntity<TransactionDTO> saveTransaction(@RequestBody TransactionDTO transactionDTO) {
+    public ResponseEntity<TransactionDTO> saveTransaction(@Valid @RequestBody TransactionDTO transactionDTO) {
         return ResponseEntity.status(HttpStatus.CREATED).body(transactionService.saveTransaction(transactionDTO));
     }
 
@@ -36,8 +37,8 @@ public class TransactionController {
             @ApiResponse(responseCode = "204", description = "Trasação atuaizada com sucesso"),
             @ApiResponse(responseCode = "500", description = "Erro ao  realizar busca dos dados")
     })
-    @PatchMapping("/update")
-    public ResponseEntity<TransactionDTO> updateTransaction(@RequestParam Long id, @RequestBody TransactionDTO transactionDTO) {
+    @PatchMapping("/update-transaction")
+    public ResponseEntity<TransactionDTO> updateTransaction(@Valid @RequestParam Long id, @RequestBody TransactionDTO transactionDTO) {
         return ResponseEntity.ok(transactionService.updateTransaction(id, transactionDTO));
     }
 

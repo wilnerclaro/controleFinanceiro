@@ -1,23 +1,14 @@
 package br.com.wilner.controleFinanceiro.entities.User;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import lombok.Builder;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
 @Builder
-@EqualsAndHashCode
-
-public class UserDTO {
-
-
-    @JsonProperty(value = "name")
-    private String name;
-    @JsonProperty(value = "email")
-    private String email;
-    @JsonProperty(value = "status_usuario")
-    private Boolean userStatus = true;
+public record UserDTO(
+        @NotBlank(message = "O nome não pode estar vazio")
+        String name,
+        @Email(message = "E-mail inválido")
+        String email) {
 
 }

@@ -1,7 +1,7 @@
 package br.com.wilner.controleFinanceiro.util.converter;
 
-import br.com.wilner.controleFinanceiro.entities.User.UserDTO;
 import br.com.wilner.controleFinanceiro.entities.User.User;
+import br.com.wilner.controleFinanceiro.entities.User.UserDTO;
 import br.com.wilner.controleFinanceiro.util.UserStatus;
 import org.springframework.stereotype.Component;
 
@@ -13,9 +13,9 @@ public class UserConverter {
 
     public User converterToEntity(UserDTO dto) {
         return User.builder()
-                .name(dto.getName())
-                .email(dto.getEmail())
-                .userStatus(dto.getUserStatus() ? UserStatus.ACTIVE : UserStatus.INACTIVE)
+                .name(dto.name())
+                .email(dto.email())
+                .userStatus(UserStatus.ACTIVE)
                 .createDate(LocalDateTime.now())
                 .build();
     }
@@ -24,15 +24,13 @@ public class UserConverter {
         return UserDTO.builder()
                 .name(user.getName())
                 .email(user.getEmail())
-                .userStatus(user.getUserStatus() == UserStatus.ACTIVE)
                 .build();
     }
 
     public User converterToEntityUpdate(User user, UserDTO userDTO) {
         return User.builder()
-                .name(userDTO.getName() != null ? userDTO.getName() : user.getName())
-                .email(userDTO.getEmail() != null ? userDTO.getEmail() : user.getEmail())
-                .userStatus(userDTO.getUserStatus() != null ? (userDTO.getUserStatus() ? UserStatus.ACTIVE : UserStatus.INACTIVE) : (user.getUserStatus() != null ? user.getUserStatus() : UserStatus.INACTIVE))
+                .name(userDTO.name() != null ? userDTO.name() : user.getName())
+                .email(userDTO.email() != null ? userDTO.email() : user.getEmail())
                 .createDate(user.getCreateDate())
                 .updateDate(LocalDateTime.now())
                 .build();

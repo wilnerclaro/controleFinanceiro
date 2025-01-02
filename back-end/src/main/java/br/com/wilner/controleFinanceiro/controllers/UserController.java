@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -46,7 +47,7 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "Erro ao  salvar usuario")
     })
     @PostMapping("/new")
-    public ResponseEntity<UserDTO> newUser(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<UserDTO> newUser(@Valid @RequestBody UserDTO userDTO) {
         return ResponseEntity.ok(userService.saveUser(userDTO));
     }
 

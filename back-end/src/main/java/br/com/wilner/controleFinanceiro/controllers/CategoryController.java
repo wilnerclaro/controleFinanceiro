@@ -1,6 +1,5 @@
 package br.com.wilner.controleFinanceiro.controllers;
 
-import br.com.wilner.controleFinanceiro.entities.Category.CategoryDTO;
 import br.com.wilner.controleFinanceiro.entities.Category.CategoryRequestDTO;
 import br.com.wilner.controleFinanceiro.entities.Category.CategoryResponseDTO;
 import br.com.wilner.controleFinanceiro.entities.Category.CategoryTotals;
@@ -8,6 +7,7 @@ import br.com.wilner.controleFinanceiro.services.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +28,7 @@ public class CategoryController {
             @ApiResponse(responseCode = "500", description = "Erro ao  salvar categoria")
     })
     @PostMapping("/new")
-    public ResponseEntity<CategoryResponseDTO> createCategory(@RequestBody CategoryRequestDTO categoryDTO) {
+    public ResponseEntity<CategoryResponseDTO> createCategory(@Valid @RequestBody CategoryRequestDTO categoryDTO) {
         return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.saveCategory(categoryDTO));
     }
 
@@ -58,15 +58,15 @@ public class CategoryController {
             @ApiResponse(responseCode = "500", description = "Erro ao  realizar busca dos dados")
     })
     @DeleteMapping("/delete")
-    public ResponseEntity<CategoryDTO> deleteCategory(@RequestParam String name) {
+    public ResponseEntity<CategoryRequestDTO> deleteCategory(@RequestParam String name) {
         categoryService.deactivationService(name);
         return ResponseEntity.accepted().build();
     }
 
-    @GetMapping("/totals/categoryName")
-    public ResponseEntity<CategoryTotals> getCategoryTotals(@RequestParam String categoryName) {
-        CategoryTotals categoryTotals = categoryService.calculateTotalsForCategory(categoryName);
-        return ResponseEntity.ok(categoryTotals);
+    @GetMapping("/totals/{categoryName}")
+    public ResponseEntity<CategoryTotals> getCategoryTotals(@PathVariable String categoryName) {
+        CategoryTotals totals = categoryService.calculateTotalsForCategory(categoryName);
+        return ResponseEntity.ok(totals);
     }
 }
 

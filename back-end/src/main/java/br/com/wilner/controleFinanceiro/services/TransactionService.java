@@ -9,6 +9,7 @@ import br.com.wilner.controleFinanceiro.repositories.TransactionRepository;
 import br.com.wilner.controleFinanceiro.services.ValidationSerice.TransactionValidationService;
 import br.com.wilner.controleFinanceiro.util.converter.TransactionConverter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class TransactionService {
 
     private final TransactionRepository transactionRepository;
@@ -41,8 +43,11 @@ public class TransactionService {
     }
 
     private void updateCategoryValueRealized(Long categoryId) {
-        Category category = categoryRepository.findById(categoryId).orElseThrow(
-                () -> new ValidationException("Categoria não encontrada: " + categoryId));
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> {
+                    log.error("Categoria informada não encontrada. ");
+                    return new ValidationException("Categoria não encontrada: " + categoryId);
+                });
         BigDecimal totalRealized = transactionRepository.findByCategoryId(categoryId).stream()
                 .map(Transaction::getTransactionValue)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -114,6 +119,12 @@ public class TransactionService {
         return transactions.stream()
                 .map(transactionConverter::converterToDTO)
                 .toList();
+    }
+
+    public void checkValidFields(Transaction transaction) {
+        if (transaction.getTransactionValue() == null || transaction.getTransactionValue().compareTo(BigDecimal.ZERO) < 0) {
+            throw new ValidationException("O valor da transação deve ser maior ou igual a zero");
+        }
     }
 
 

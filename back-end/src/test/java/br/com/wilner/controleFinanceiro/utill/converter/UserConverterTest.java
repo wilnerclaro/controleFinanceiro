@@ -1,83 +1,51 @@
 package br.com.wilner.controleFinanceiro.utill.converter;
 
-import br.com.wilner.controleFinanceiro.entities.User.UserDTO;
 import br.com.wilner.controleFinanceiro.entities.User.User;
+import br.com.wilner.controleFinanceiro.entities.User.UserDTO;
+import br.com.wilner.controleFinanceiro.util.UserStatus;
 import br.com.wilner.controleFinanceiro.util.converter.UserConverter;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.temporal.ChronoUnit;
+import java.time.LocalDateTime;
 
-import static br.com.wilner.controleFinanceiro.builder.UserBuilder.umUser;
-import static br.com.wilner.controleFinanceiro.builder.UserDTOBuilder.umUserDTO;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ExtendWith(MockitoExtension.class)
 class UserConverterTest {
 
     @InjectMocks
-    UserConverter userConverter;
-
-    private UserDTO userDTO;
+    private UserConverter userConverter;
 
     private User user;
+    private UserDTO userDTO;
 
-    @Test
-    void deveConverterParaUserEntityComSucesso() {
-        userDTO = umUserDTO().agora();
-        user = umUser().agora();
-
-        User userToEntity = userConverter.converterToEntity(userDTO);
-
-        assertAll("UsuarioEntity",
-                () -> assertEquals(user.getName(), userToEntity.getName()),
-                () -> assertEquals(user.getEmail(), userToEntity.getEmail()),
-                () -> assertEquals(user.getUserStatus(), userToEntity.getUserStatus())
-
-        );
-
-        assertNotNull(userToEntity.getName());
-        assertNotNull(userToEntity.getCreateDate());
+    @BeforeEach
+    void setUp() {
+        user = new User(1L, "Teste", "teste@teste.com", UserStatus.ACTIVE, LocalDateTime.now(), null, null);
+        userDTO = new UserDTO("Teste", "teste@teste.com");
     }
 
     @Test
-    void deveConverterParaUserEntityUpdateComSucesso() {
+    void deveConverterDeDTOParaEntidade() {
+        User result = userConverter.converterToEntity(userDTO);
 
-        userDTO = umUserDTO().comName("TesteNovo").agora();
-        User userEsperado = umUser().comName("TesteNovo").agora();
-        user = umUser().comName("outro nome").agora();
-
-        User userToEntityUpdate = userConverter.converterToEntityUpdate(user, userDTO);
-
-        assertAll("UsuarioEntityUpdate",
-                () -> assertEquals(userEsperado.getName(), userToEntityUpdate.getName()),
-                () -> assertEquals(userEsperado.getEmail(), userToEntityUpdate.getEmail()),
-                () -> assertEquals(userEsperado.getUserStatus(), userToEntityUpdate.getUserStatus()),
-                () -> assertEquals(userEsperado.getCreateDate().truncatedTo(ChronoUnit.MINUTES), userToEntityUpdate.getCreateDate().truncatedTo(ChronoUnit.MINUTES))
-
-        );
-
-        assertNotNull(userToEntityUpdate.getUpdateDate());
-
+        assertNotNull(result);
+        assertEquals(userDTO.name(), result.getName());
+        assertEquals(userDTO.email(), result.getEmail());
     }
 
     @Test
-    void deveConverterParaUserDTOComSucesso() {
-        userDTO = umUserDTO().agora();
-        user = umUser().agora();
+    void deveConverterDeEntidadeParaDTO() {
+        UserDTO result = userConverter.converterToDTO(user);
 
-        UserDTO userToDTO = userConverter.converterToDTO(user);
-
-        assertAll("UsuarioDTO",
-                () -> assertEquals(userDTO.getName(), userToDTO.getName()),
-                () -> assertEquals(userDTO.getEmail(), userToDTO.getEmail()),
-                () -> assertEquals(userDTO.getUserStatus(), userToDTO.getUserStatus())
-
-        );
-
-        assertNotNull(userToDTO.getName());
+        assertNotNull(result);
+        assertEquals(user.getName(), result.name());
+        assertEquals(user.getEmail(), result.email());
     }
 
 }

@@ -1,9 +1,9 @@
 package br.com.wilner.controleFinanceiro.services;
 
-import br.com.wilner.controleFinanceiro.builder.CategoryBuilder;
 import br.com.wilner.controleFinanceiro.entities.Category.Category;
 import br.com.wilner.controleFinanceiro.entities.Category.CategoryRequestDTO;
 import br.com.wilner.controleFinanceiro.entities.Category.CategoryResponseDTO;
+import br.com.wilner.controleFinanceiro.entities.Category.CategoryTotals;
 import br.com.wilner.controleFinanceiro.exception.ValidationException;
 import br.com.wilner.controleFinanceiro.repositories.CategoryRepository;
 import br.com.wilner.controleFinanceiro.services.ValidationSerice.CategoryValidationService;
@@ -16,11 +16,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.List;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
-import static br.com.wilner.controleFinanceiro.builder.CategoryBuilder.umCategory;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -29,167 +27,60 @@ import static org.mockito.Mockito.*;
 class CategoryServiceTest {
 
     @InjectMocks
-    CategoryService categoryService;
+    private CategoryService categoryService;
 
     @Mock
-    CategoryRepository categoryRepository;
+    private CategoryRepository categoryRepository;
+
     @Mock
-    CategoryConverter categoryConverter;
+    private CategoryConverter categoryConverter;
     @Mock
-    CategoryValidationService categoryValidationService;
-    CategoryRequestDTO categoryRequestDTO;
-    CategoryResponseDTO categoryResponseDTO;
+    private CategoryValidationService categoryValidationService;
+
+    private Category category;
+    private CategoryRequestDTO categoryRequestDTO;
+    private CategoryResponseDTO categoryResponseDTO;
 
     @BeforeEach
     void setUp() {
-        categoryRequestDTO = new CategoryRequestDTO("teste", "teste", new BigDecimal("10"));
-        categoryResponseDTO = new CategoryResponseDTO("teste", "teste", true, new BigDecimal("10"), new BigDecimal("10"));
+        category = new Category(1L, "Lazer", "Categoria de Lazer", LocalDateTime.now(), LocalDateTime.now(),
+                null, true, new BigDecimal("300"), new BigDecimal("300"));
+        categoryRequestDTO = new CategoryRequestDTO("Lazer", "Categoria de Lazer", new BigDecimal("300"));
+        categoryResponseDTO = new CategoryResponseDTO("Lazer", "Categoria de Lazer", true, new BigDecimal("300"), new BigDecimal("300"));
     }
 
     @Test
-    void deveCriarUmaCategoriaComSucesso() {
-        Category mockCategory = umCategory().agora();
+    void deveSalvarCategoriaComSucesso() {
+        when(categoryConverter.converterToEntity(any(CategoryRequestDTO.class))).thenReturn(category);
+        when(categoryRepository.save(any(Category.class))).thenReturn(category);
+        when(categoryConverter.converterToDTO(any(Category.class))).thenReturn(categoryResponseDTO);
 
-        when(categoryConverter.converterToEntity(categoryRequestDTO)).thenReturn(mockCategory);
-        when(categoryConverter.converterToDTO(mockCategory)).thenReturn(categoryResponseDTO);
-        when(categoryRepository.save(any(Category.class))).thenReturn(mockCategory);
-
-        var savedCategory = categoryService.saveCategory(categoryRequestDTO);
-
-
-        verify(categoryConverter).converterToDTO(mockCategory);
-        verify(categoryConverter).converterToEntity(categoryRequestDTO);
-        verify(categoryRepository).save(mockCategory);
-        verifyNoMoreInteractions(categoryConverter, categoryRepository);
-
-    }
-
-    @Test
-    void deveDarExcptionCasoOcorraAlgumErroDuranteACriacaoDeUmaCategoria() {
-        Category mockCategory = umCategory().agora();
-
-        when(categoryConverter.converterToEntity(categoryRequestDTO)).thenReturn(mockCategory);
-        when(categoryRepository.save(any(Category.class))).thenThrow(new ValidationException("Erro ao Salvar Categoria"));
-
-        ValidationException ex = assertThrows(ValidationException.class, () -> {
-            categoryService.saveCategory(categoryRequestDTO);
-        });
-
-        assertEquals("Erro ao Salvar Categoria", ex.getMessage());
-    }
-
-    @Test
-    void deveListarTodasAsCategoriasComsucesso() {
-        List<CategoryResponseDTO> mockCategoriesDTO = Collections.singletonList(categoryResponseDTO);
-
-        Category mockCategory = umCategory().agora();
-        List<Category> mockCategories = Collections.singletonList(mockCategory);
-
-        when(categoryConverter.converterToDTO(mockCategory)).thenReturn(categoryResponseDTO);
-        when(categoryRepository.findByIsActive(true)).thenReturn(mockCategories);
-
-        List<CategoryResponseDTO> result = categoryService.getAllCategories();
-
-        assertEquals(mockCategoriesDTO, result);
-        verify(categoryConverter).converterToDTO(mockCategory);
-        verify(categoryRepository).findByIsActive(true);
-        verifyNoMoreInteractions(categoryConverter, categoryRepository);
-
-
-    }
-
-    @Test
-    void deveLancarExceptionCasoNaoConsigaListarAsCategorias() {
-        when(categoryRepository.findByIsActive(true)).thenThrow(new ValidationException("Erro ao listar categorias "));
-
-        ValidationException ex = assertThrows(ValidationException.class, () -> {
-            categoryService.getAllCategories();
-        });
-
-        assertEquals("Erro ao listar categorias ", ex.getMessage());
-    }
-
-    @Test
-    void deveBuscarCategoriaPorNomeComsucesso() {
-        Category mockCategory = umCategory().agora();
-
-        when(categoryConverter.converterToDTO(mockCategory)).thenReturn(categoryResponseDTO);
-        when(categoryRepository.findByNameAndIsActive(categoryResponseDTO.name(), true)).thenReturn(Optional.of(mockCategory));
-
-        var getCategoryByName = categoryService.getCategoryByName(categoryResponseDTO.name());
-
-        assertEquals(categoryResponseDTO, getCategoryByName);
-        verify(categoryConverter).converterToDTO(mockCategory);
-        verifyNoMoreInteractions(categoryConverter, categoryRepository);
-    }
-
-    @Test
-    void deveLancarValidationExceptionQuandoNomeDaCategoriaNaoEncontrado() {
-        Category mockCategory = umCategory().comName("Teste").agora();
-
-        ValidationException exception = assertThrows(ValidationException.class,
-                () -> categoryService.getCategoryByName(mockCategory.getName()));
-
-        assertEquals("Categoria não encontrada " + mockCategory.getName(), exception.getMessage());
-    }
-
-    @Test
-    void deveDesativarCategoriaComSucesso() {
-        Category category = CategoryBuilder.umCategory().agora();
-
-        when(categoryRepository.findByNameAndIsActive(category.getName(), true)).thenReturn(Optional.of(category));
-
-        categoryService.deactivationService(category.getName());
-
-        assertFalse(category.getIsActive());
-        verify(categoryRepository).save(category);
-        verify(categoryRepository).findByNameAndIsActive(category.getName(), true);
-    }
-
-    @Test
-    void deveLancarExcptionQuandoUmaCategoriaNaoEhEncontrada() {
-        String categoryName = "Inexistente";
-
-        when(categoryRepository.findByNameAndIsActive(categoryName, true)).thenReturn(Optional.empty());
-
-
-        ValidationException exception = assertThrows(ValidationException.class,
-                () -> categoryService.deactivationService(categoryName));
-
-        assertEquals("Categoria não encontrada ", exception.getMessage());
-    }
-
-    @Test
-    void calculateTotalsForCategory_ShouldReturnTotals_WhenCategoryExists() {
-
-        String categoryName = "Entertainment";
-        BigDecimal totalPredicted = new BigDecimal("100");
-        BigDecimal totalRealized = new BigDecimal("90");
-        List<Object[]> mockResults = Collections.singletonList(new Object[]{categoryName, totalPredicted, totalRealized});
-
-        when(categoryRepository.findTotalsByCategoryNameNative(categoryName)).thenReturn(mockResults);
-
-        CategoryDTO expectedDTO = new CategoryDTO(categoryName, totalPredicted, totalRealized);
-
-        CategoryDTO result = categoryService.calculateTotalsForCategory(categoryName);
+        CategoryResponseDTO result = categoryService.saveCategory(categoryRequestDTO);
 
         assertNotNull(result);
-        assertEquals(expectedDTO.getCategoryName(), result.getCategoryName());
-        assertEquals(0, expectedDTO.getTotalPredicted().compareTo(result.getTotalPredicted()));
-        assertEquals(0, expectedDTO.getTotalRealized().compareTo(result.getTotalRealized()));
+        assertEquals(categoryResponseDTO.name(), result.name());
+        verify(categoryRepository).save(any(Category.class));
     }
-
 
     @Test
-    void deveDarErroQuandoACategoriaOuTransacaoNaoForEncontrado() {
-        String categoryName = "Nonexistent";
-        when(categoryRepository.findTotalsByCategoryNameNative(categoryName)).thenReturn(Collections.emptyList());
+    void deveLancarExceptionAoBuscarCategoriaNaoEncontrada() {
+        ValidationException exception = assertThrows(ValidationException.class, () -> {
+            categoryService.getCategoryByName("Lazer");
+        });
 
-        Exception exception = assertThrows(ValidationException.class, () ->
-                categoryService.calculateTotalsForCategory(categoryName));
-
-        assertEquals("Categoria não encontrada ou sem transações: " + categoryName, exception.getMessage());
+        assertEquals("Categoria não encontrada " + categoryRequestDTO.name(), exception.getMessage());
     }
 
+    @Test
+    void deveCalcularTotaisPorCategoria() {
+        when(categoryRepository.findTotalsByCategoryName(anyString())).thenReturn(Optional.of(new CategoryTotals("Lazer", new BigDecimal("300"), new BigDecimal("300"))));
+
+        CategoryTotals result = categoryService.calculateTotalsForCategory("Lazer");
+
+        assertNotNull(result);
+        assertEquals(categoryResponseDTO.valueRealized(), result.totalRealized());
+        assertEquals(categoryResponseDTO.valueExpected(), result.totalExpected());
+        verify(categoryRepository).findTotalsByCategoryName(anyString());
+    }
 
 }

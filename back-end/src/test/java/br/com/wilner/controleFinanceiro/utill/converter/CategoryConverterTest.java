@@ -1,47 +1,56 @@
 package br.com.wilner.controleFinanceiro.utill.converter;
 
+import br.com.wilner.controleFinanceiro.entities.Category.Category;
+import br.com.wilner.controleFinanceiro.entities.Category.CategoryRequestDTO;
+import br.com.wilner.controleFinanceiro.entities.Category.CategoryResponseDTO;
+import br.com.wilner.controleFinanceiro.util.converter.CategoryConverter;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ExtendWith(MockitoExtension.class)
 class CategoryConverterTest {
 
-    /*@InjectMocks
-    CategoryConverter categoryConverter;
-    @Mock
-    CategoryDTO categoryDTO;
-    @Mock
-    Category category;
+    @InjectMocks
+    private CategoryConverter categoryConverter;
+
+    private Category category;
+    private CategoryRequestDTO categoryRequestDTO;
+    private CategoryResponseDTO categoryResponseDTO;
 
     @BeforeEach
-    void setup() {
-        category = umCategory().agora();
-        categoryDTO = umCategoryDTO().agora();
+    void setUp() {
+        category = new Category(1L, "LAZER", "CATEGORIA DE LAZER", LocalDateTime.now(), LocalDateTime.now(),
+                null, true, new BigDecimal("300"), new BigDecimal("300"));
+        categoryRequestDTO = new CategoryRequestDTO("LAZER", "CATEGORIA DE LAZER", new BigDecimal("300"));
+        categoryResponseDTO = new CategoryResponseDTO("LAZER", "CATEGORIA DE LAZER", true, BigDecimal.ZERO, BigDecimal.ZERO);
     }
 
     @Test
-    void deveConverterParaCategoryEntityComSucesso() {
-        Category categoryToEntity = categoryConverter.converterToEntity(categoryDTO);
+    void deveConverterDeRequestDTOParaEntidade() {
+        Category result = categoryConverter.converterToEntity(categoryRequestDTO);
 
-        assertAll("CategoryEntity",
-                () -> assertEquals(category.getName(), categoryToEntity.getName()),
-                () -> assertEquals(category.getDescription(), categoryToEntity.getDescription())
-        );
-        assertNotNull(categoryToEntity.getName());
-        assertNotNull(categoryToEntity.getName());
-
-
+        assertNotNull(result);
+        assertEquals(categoryRequestDTO.name(), result.getName());
+        assertEquals(categoryRequestDTO.description(), result.getDescription());
     }
 
     @Test
-    void deveConverterParaCategoryDTOComSucesso() {
-        CategoryDTO categoryToDTO = categoryConverter.converterToDTO(category);
+    void deveConverterDeEntidadeParaResponseDTO() {
+        CategoryResponseDTO result = categoryConverter.converterToDTO(category);
 
-        assertAll("CategoryDTO",
-                () -> assertEquals(categoryDTO.getCategoryName(), categoryToDTO.getCategoryName()),
-                () -> assertEquals(categoryDTO.getDescription(), categoryToDTO.getDescription())
-        );
-        assertNotNull(categoryToDTO.getCategoryName());
-
-    }*/
+        assertNotNull(result);
+        assertEquals(category.getName(), result.name());
+        assertEquals(category.getDescription(), result.description());
+        assertEquals(category.getValueExpected(), result.valueExpected());
+        assertEquals(category.getValueRealized(), result.valueRealized());
+    }
 }

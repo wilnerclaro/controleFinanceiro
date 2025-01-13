@@ -1,9 +1,7 @@
 package br.com.wilner.controleFinanceiro.builder;
 
-import java.math.BigDecimal;
-
 public class CategoryDTOBuilder {
-    private CategoryDTO elemento;
+   /*private CategoryDTO elemento;
 
     private CategoryDTOBuilder() {
     }
@@ -47,5 +45,5 @@ public class CategoryDTOBuilder {
 
     public CategoryDTO agora() {
         return elemento;
-    }
+    }*/
 }

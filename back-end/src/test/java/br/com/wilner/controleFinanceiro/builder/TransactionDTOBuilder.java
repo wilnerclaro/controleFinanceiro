@@ -1,12 +1,7 @@
 package br.com.wilner.controleFinanceiro.builder;
 
-import br.com.wilner.controleFinanceiro.entities.Transaction.TransactionDTO;
-
-import java.math.BigDecimal;
-
-
 public class TransactionDTOBuilder {
-    private TransactionDTO elemento;
+   /* private TransactionDTO elemento;
 
     private TransactionDTOBuilder() {
     }
@@ -64,5 +59,5 @@ public class TransactionDTOBuilder {
 
     public TransactionDTO agora() {
         return elemento;
-    }
+    }*/
 }

@@ -1,10 +1,7 @@
 package br.com.wilner.controleFinanceiro.builder;
 
-import br.com.wilner.controleFinanceiro.entities.User.UserDTO;
-
-
 public class UserDTOBuilder {
-    private UserDTO elemento;
+   /* private UserDTO elemento;
 
     private UserDTOBuilder() {
     }
@@ -43,6 +40,6 @@ public class UserDTOBuilder {
 
     public UserDTO agora() {
         return elemento;
-    }
+    }*/
 }
 

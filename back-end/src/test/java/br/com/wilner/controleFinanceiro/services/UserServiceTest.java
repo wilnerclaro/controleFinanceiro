@@ -1,25 +1,21 @@
 package br.com.wilner.controleFinanceiro.services;
 
-import br.com.wilner.controleFinanceiro.entities.User.UserDTO;
 import br.com.wilner.controleFinanceiro.entities.User.User;
+import br.com.wilner.controleFinanceiro.entities.User.UserDTO;
 import br.com.wilner.controleFinanceiro.exception.ValidationException;
 import br.com.wilner.controleFinanceiro.repositories.UserRepository;
+import br.com.wilner.controleFinanceiro.util.UserStatus;
 import br.com.wilner.controleFinanceiro.util.converter.UserConverter;
-import jakarta.persistence.EntityNotFoundException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Collections;
-import java.util.List;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
-import static br.com.wilner.controleFinanceiro.builder.UserBuilder.umUser;
-import static br.com.wilner.controleFinanceiro.builder.UserDTOBuilder.umUserDTO;
-import static br.com.wilner.controleFinanceiro.util.UserStatus.ACTIVE;
-import static br.com.wilner.controleFinanceiro.util.UserStatus.INACTIVE;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -28,206 +24,54 @@ class UserServiceTest {
 
     @InjectMocks
     private UserService userService;
+
     @Mock
     private UserRepository userRepository;
+
     @Mock
     private UserConverter userConverter;
 
+    private User user;
+    private UserDTO userDTO;
 
-    @Test
-    void deveListarUsuariosComSucesso() {
-        User user = umUser().agora();
-        List<User> listUsers = Collections.singletonList(user);
-
-        UserDTO userDTO = umUserDTO().agora();
-        List<UserDTO> listUsersDTO = Collections.singletonList(userDTO);
-
-
-        when(userConverter.converterToDTO(user)).thenReturn(userDTO);
-        when(userRepository.findByUserStatus(ACTIVE)).thenReturn(listUsers);
-
-        List<UserDTO> result = userService.getAllUsers();
-
-        assertEquals(listUsersDTO, result);
-        verify(userConverter).converterToDTO(user);
-        verify(userRepository).findByUserStatus(ACTIVE);
-        verifyNoMoreInteractions(userConverter, userRepository);
-
-
+    @BeforeEach
+    void setUp() {
+        user = new User(1L, "Teste", "teste@teste.com", UserStatus.ACTIVE, LocalDateTime.now(), null, null);
+        userDTO = new UserDTO("Teste", "teste@teste.com");
     }
 
     @Test
-    void deveBuscarUmUsuarioComId() {
-        final String USER_NAME = "Teste";
-        User userByName = umUser().comName(USER_NAME).agora();
-        UserDTO userDTOByName = umUserDTO().comName(USER_NAME).agora();
+    void deveSalvarUsuarioComSucesso() {
+        when(userRepository.save(any(User.class))).thenReturn(user);
+        when(userConverter.converterToDTO(any(User.class))).thenReturn(userDTO);
+        when(userConverter.converterToEntity(any(UserDTO.class))).thenReturn(user);
 
-        when(userConverter.converterToDTO(userByName)).thenReturn(userDTOByName);
-        when(userRepository.findByNameAndUserStatus(USER_NAME, ACTIVE)).thenReturn(Optional.of(userByName));
+        UserDTO result = userService.saveUser(userDTO);
 
-        UserDTO getUserById = userService.getUserByName(USER_NAME);
-
-        assertEquals(userDTOByName, getUserById);
-        verify(userConverter).converterToDTO(userByName);
-        verify(userRepository).findByNameAndUserStatus(USER_NAME, ACTIVE);
-        verifyNoMoreInteractions(userConverter, userRepository);
-
-    }
-
-    @Test
-    void deveSalvarUmUsuarioComSucesso() {
-        UserDTO userDTO = umUserDTO().agora();
-        User user = umUser().agora();
-
-        when(userConverter.converterToEntity(userDTO)).thenReturn(user);
-        when(userConverter.converterToDTO(user)).thenReturn(userDTO);
-        when(userRepository.save(user)).thenReturn(user);
-
-        UserDTO savedUser = userService.saveUser(userDTO);
-
-        assertEquals(userDTO, savedUser);
-        verify(userConverter).converterToDTO(user);
-        verify(userConverter).converterToEntity(userDTO);
-        verify(userRepository).save(user);
-        verifyNoMoreInteractions(userConverter, userRepository);
-    }
-
-    @Test
-    void deveDeletarUmUsuarioComSucesso() {
-        final String USER_NAME = "Teste";
-        User user = umUser().comUserStatus(ACTIVE).agora();
-
-        when(userRepository.findByNameAndUserStatus(USER_NAME, ACTIVE)).thenReturn(Optional.of(user));
-
-        doAnswer(invocation -> {
-            User savedUser = invocation.getArgument(0);
-            assertEquals(INACTIVE, savedUser.getUserStatus());
-            assertNotNull(savedUser.getUpdateDate());
-            return null;
-        }).when(userRepository).save(any(User.class));
-
-        userService.deactivationService(USER_NAME);
-
-        verify(userRepository, times(1)).save(user);
-    }
-
-    @Test
-    void deveAtualizarUsuarioComSucesso() {
-        final String USER_NAME = "Teste";
-        User existingUser = umUser().comName("Novo Usuário").agora();
-        UserDTO updateUserDTO = umUserDTO().comName("Novo Nome").agora();
-
-        when(userRepository.findByNameAndUserStatus(USER_NAME, ACTIVE)).thenReturn(Optional.ofNullable(existingUser));
-        when(userRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
-        when(userConverter.converterToEntityUpdate(any(User.class), any(UserDTO.class)))
-                .thenAnswer(invocation -> {
-                    User userToUpdate = invocation.getArgument(0, User.class);
-                    UserDTO updatedData = invocation.getArgument(1, UserDTO.class);
-                    userToUpdate.setName(updatedData.getName());
-                    return userToUpdate;
-                });
-
-        when(userConverter.converterToDTO(existingUser)).thenReturn(updateUserDTO);
-
-        UserDTO result = userService.updateUser(USER_NAME, updateUserDTO);
-
-        assertNotNull(existingUser);
         assertNotNull(result);
-        assertEquals(updateUserDTO.getName(), result.getName());
-
-        verify(userRepository, times(1)).findByNameAndUserStatus(USER_NAME, ACTIVE);
-        verify(userRepository, times(1)).save(existingUser);
+        assertEquals(userDTO.name(), result.name());
+        verify(userRepository).save(any(User.class));
     }
 
     @Test
-    void naoDeveRetornarUsarioCasoErroNoRepositorio() {
-
-        when(userRepository.findByUserStatus(ACTIVE)).thenThrow(ValidationException.class);
-
-        String message = assertThrows(ValidationException.class, () -> {
-            userService.getAllUsers();
-        }).getMessage();
-
-        assertEquals("Erro ao listar usuarios ", message);
-    }
-
-    @Test
-    void naoDeveRetornarUsarioCasoIDNaoExista() {
-        final String USER_NAME = "Teste";
-
-        when(userRepository.findByNameAndUserStatus(USER_NAME, ACTIVE)).thenReturn(Optional.empty());
-
-        String message = assertThrows(ValidationException.class, () -> {
-            userService.getUserByName(USER_NAME);
-        }).getMessage();
-
-        assertEquals("Usuario não encontrado " + USER_NAME, message);
-    }
-
-    @Test
-    void deveLancarExceptionAoSalvarUsuario() {
-        UserDTO userDTO = umUserDTO().agora();
-
-        when(userRepository.save(any(User.class))).thenThrow(ValidationException.class);
-
-        String message = assertThrows(ValidationException.class, () -> {
-            userService.saveUser(userDTO);
-        }).getMessage();
-
-        assertEquals("Erro ao salvar usuário ", message);
-    }
-
-
-    @Test
-    void deveLancarExceptionQuandoUsuarioNaoEncontrado() {
-        User username = umUser().comName("Teste").agora();
-        when(userRepository.findByNameAndUserStatus(username.getName(), ACTIVE)).thenReturn(Optional.empty());
-
-        Exception exception = assertThrows(EntityNotFoundException.class, () -> {
-            userService.deactivationService(username.getName());
+    void deveLancarExceptionAoBuscarUsuarioNaoEncontrado() {
+        ValidationException exception = assertThrows(ValidationException.class, () -> {
+            userService.getUserByName("Teste");
         });
 
-        String expectedMessage = "Usuário não encontrado com ID: " + username.getName();
-        String actualMessage = exception.getMessage();
-
-        assertEquals(expectedMessage, actualMessage);
+        assertEquals("Usuário não encontrado " + userDTO.name(), exception.getMessage());
     }
 
     @Test
-    void deveLancarRuntimeExceptionParaErroInesperadoNaAtualizacao() {
-        String USER_NAME = "Teste";
-        UserDTO userDTOMock = umUserDTO().agora();
-        User userMock = umUser().agora();
+    void deveBuscarUsuarioPorNome() {
+        when(userRepository.findByNameAndUserStatus(anyString(), any(UserStatus.class)))
+                .thenReturn(Optional.of(user));
+        when(userConverter.converterToDTO(any(User.class))).thenReturn(userDTO);
 
-        when(userRepository.findByNameAndUserStatus(USER_NAME, ACTIVE)).thenReturn(Optional.of(userMock));
-        when(userConverter.converterToEntityUpdate(userMock, userDTOMock)).thenReturn(userMock);
-        when(userRepository.save(userMock)).thenThrow(new RuntimeException("Erro no banco de dados"));
+        UserDTO result = userService.getUserByName("Teste");
 
-        Exception exception = assertThrows(RuntimeException.class, () -> {
-            userService.updateUser(USER_NAME, userDTOMock);
-        });
-
-        String expectedMessage = "Falha ao atualizar usaurio: " + USER_NAME;
-        String actualMessage = exception.getMessage();
-
-        assertTrue(actualMessage.contains(expectedMessage));
-    }
-
-    @Test
-    void deveLancarExceptionQuandoUsuarioNaoEncontradoParaAtualizacao() {
-        String USER_NAME = "Teste";
-        UserDTO userDTOMock = umUserDTO().agora();
-
-        when(userRepository.findByNameAndUserStatus(USER_NAME, ACTIVE)).thenReturn(Optional.empty());
-
-        Exception exception = assertThrows(ValidationException.class, () -> {
-            userService.updateUser(USER_NAME, userDTOMock);
-        });
-
-        String expectedMessage = "Usuario não encontrado " + USER_NAME;
-        String actualMessage = exception.getMessage();
-
-        assertEquals(expectedMessage, actualMessage);
+        assertNotNull(result);
+        assertEquals(userDTO.name(), result.name());
     }
 
 

@@ -1,7 +1,7 @@
 package br.com.wilner.controleFinanceiro.services;
 
-import br.com.wilner.controleFinanceiro.entities.User.UserDTO;
 import br.com.wilner.controleFinanceiro.entities.User.User;
+import br.com.wilner.controleFinanceiro.entities.User.UserDTO;
 import br.com.wilner.controleFinanceiro.exception.ValidationException;
 import br.com.wilner.controleFinanceiro.repositories.UserRepository;
 import br.com.wilner.controleFinanceiro.services.SoftDeletes.DeactivationService;
@@ -42,7 +42,7 @@ public class UserService implements DeactivationService {
     public UserDTO getUserByName(String name) {
 
         User userId = userRepository.findByNameAndUserStatus(name, UserStatus.ACTIVE)
-                .orElseThrow(() -> new ValidationException("Usuario não encontrado " + name));
+                .orElseThrow(() -> new ValidationException("Usuário não encontrado " + name));
         return userConverter.converterToDTO(userId);
     }
 

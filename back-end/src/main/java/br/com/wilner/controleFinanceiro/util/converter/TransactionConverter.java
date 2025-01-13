@@ -76,7 +76,7 @@ public class TransactionConverter {
     private Category findCategory(TransactionDTO dto) {
         return categoryRepository.findByNameAndIsActive(dto.categoryName(), true)
                 .orElseThrow(() -> {
-                    log.warn("Usuário não encontrado: {}", dto.categoryName());
+                    log.warn("Categoria não encontrada: {}", dto.categoryName());
                     return new RuntimeException("Categoria não encontrada: " + dto.categoryName());
                 });
     }

@@ -6,6 +6,7 @@ import br.com.wilner.controleFinanceiro.exception.ValidationException;
 import br.com.wilner.controleFinanceiro.repositories.UserRepository;
 import br.com.wilner.controleFinanceiro.util.UserStatus;
 import br.com.wilner.controleFinanceiro.util.converter.UserConverter;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -42,6 +43,8 @@ class UserServiceTest {
 
     @Test
     void deveSalvarUsuarioComSucesso() {
+        when(userRepository.findByNameAndUserStatus(anyString(), any(UserStatus.class)))
+                .thenReturn(Optional.of(user));
         when(userRepository.save(any(User.class))).thenReturn(user);
         when(userConverter.converterToDTO(any(User.class))).thenReturn(userDTO);
         when(userConverter.converterToEntity(any(UserDTO.class))).thenReturn(user);
@@ -74,5 +77,54 @@ class UserServiceTest {
         assertEquals(userDTO.name(), result.name());
     }
 
+    @Test
+    void deveLancarExceptionAoSalvarUsuarioComEmailDuplicado() {
+        ValidationException exception = assertThrows(ValidationException.class, () -> {
+            userService.saveUser(userDTO);
+        });
+
+        assertEquals("E-mail já cadastrado: " + userDTO.email(), exception.getMessage());
+        verifyNoMoreInteractions(userConverter);
+    }
+
+    @Test
+    void deveAtualizarUsuarioComSucesso() {
+        when(userRepository.findByNameAndUserStatus(anyString(), any(UserStatus.class))).thenReturn(Optional.of(user));
+        when(userRepository.save(user)).thenReturn(user);
+        when(userConverter.converterToDTO(user)).thenReturn(userDTO);
+        when(userConverter.converterToEntityUpdate(user, userDTO)).thenReturn(user);
+
+        UserDTO result = userService.updateUser("Teste", userDTO);
+
+        assertNotNull(result);
+        assertEquals(userDTO.name(), result.name());
+        verify(userRepository).save(user);
+    }
+
+    @Test
+    void deveLancarExceptionAoAtualizarUsuarioNaoExistente() {
+        ValidationException exception = assertThrows(ValidationException.class, () -> {
+            userService.updateUser("Teste", userDTO);
+        });
+
+        assertEquals("Usuario não encontrado Teste", exception.getMessage());
+        verifyNoMoreInteractions(userConverter);
+    }
+
+    @Test
+    void deveExcluirUsuarioComSucesso() {
+        when(userRepository.findByNameAndUserStatus(anyString(), any(UserStatus.class))).thenReturn(Optional.of(user));
+        userService.deactivationService("1L");
+        verifyNoMoreInteractions(userConverter);
+    }
+
+    @Test
+    void deveLancarExceptionAoExcluirUsuarioNaoExistente() {
+        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> {
+            userService.deactivationService("1");
+        });
+
+        assertEquals("Usuário não encontrado com ID: 1", exception.getMessage());
+    }
 
 }

@@ -47,14 +47,13 @@ public class UserService implements DeactivationService {
     }
 
     public UserDTO saveUser(UserDTO userDTO) {
-        try {
-            User user = userConverter.converterToEntity(userDTO);
-            User savedUser = userRepository.save(user);
-            return userConverter.converterToDTO(savedUser);
-        } catch (Exception e) {
-            throw new ValidationException("Erro ao salvar usuário ");
-        }
+        userRepository.findByNameAndUserStatus(userDTO.name(), UserStatus.ACTIVE)
+                .orElseThrow(() -> new ValidationException("E-mail já cadastrado: " + userDTO.email()));
+        User user = userConverter.converterToEntity(userDTO);
+        User savedUser = userRepository.save(user);
+        return userConverter.converterToDTO(savedUser);
     }
+
 
     public UserDTO updateUser(String name, UserDTO userDTO) {
         try {

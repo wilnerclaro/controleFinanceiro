@@ -83,4 +83,55 @@ class CategoryServiceTest {
         verify(categoryRepository).findTotalsByCategoryName(anyString());
     }
 
+    @Test
+    void deveBuscarCategoriaPorNomeComSucesso() {
+        when(categoryRepository.findByNameAndIsActive(anyString(), anyBoolean())).thenReturn(Optional.of(category));
+        when(categoryConverter.converterToDTO(category)).thenReturn(categoryResponseDTO);
+
+        CategoryResponseDTO result = categoryService.getCategoryByName("Teste");
+
+        assertNotNull(result);
+        assertEquals(categoryResponseDTO.name(), result.name());
+    }
+
+    @Test
+    void deveLancarExceptionAoBuscarCategoriaPorNomeNaoExistente() {
+
+        ValidationException exception = assertThrows(ValidationException.class, () -> {
+            categoryService.getCategoryByName("Teste");
+        });
+
+        assertEquals("Categoria não encontrada Teste", exception.getMessage());
+    }
+
+    @Test
+    void deveLancarExceptionAoCalcularTotaisParaCategoriaNaoExistente() {
+
+        ValidationException exception = assertThrows(ValidationException.class, () -> {
+            categoryService.calculateTotalsForCategory(categoryRequestDTO.name());
+        });
+
+        assertEquals("Categoria não encontrada ou sem transações: " + categoryRequestDTO.name(), exception.getMessage());
+    }
+
+    @Test
+    void deveExcluirCategoriaComSucesso() {
+        when(categoryRepository.findByNameAndIsActive(anyString(), anyBoolean())).thenReturn(Optional.of(category));
+
+        categoryService.deactivationService("1L");
+
+        assertEquals(categoryResponseDTO.isActive(), true);
+    }
+
+    @Test
+    void deveLancarExceptionAoExcluirCategoriaNaoExistente() {
+        when(categoryRepository.findByNameAndIsActive(anyString(), anyBoolean())).thenReturn(Optional.empty());
+
+        ValidationException exception = assertThrows(ValidationException.class, () -> {
+            categoryService.deactivationService("1L");
+        });
+
+        assertEquals("Categoria não encontrada ", exception.getMessage());
+    }
+
 }

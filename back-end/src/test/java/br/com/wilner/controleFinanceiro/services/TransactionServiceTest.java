@@ -101,6 +101,84 @@ class TransactionServiceTest {
         verify(transactionRepository).findByCategoryNameAndTransactionDateBetween(anyString(), any(LocalDateTime.class), any(LocalDateTime.class));
     }
 
+    @Test
+    void deveBuscarTransacaoPorNomeComSucesso() {
+        when(transactionRepository.findById(transaction.getId())).thenReturn(Optional.of(transaction));
+        when(transactionConverter.converterToDTO(transaction)).thenReturn(transactionDTO);
+
+        TransactionDTO result = transactionService.getTransactionById(transaction.getId());
+
+        assertNotNull(result);
+        assertEquals(transactionDTO.transactionType(), result.transactionType());
+        verify(transactionRepository).findById(transaction.getId());
+    }
+
+    @Test
+    void deveLancarExceptionAoBuscarTransacaoPorIdNaoExistente() {
+        when(transactionRepository.findById(transaction.getId())).thenReturn(Optional.empty());
+
+        ValidationException exception = assertThrows(ValidationException.class, () -> {
+            transactionService.getTransactionById(transaction.getId());
+        });
+
+        assertEquals("Transacao não encontrado 1", exception.getMessage());
+        verify(transactionRepository).findById(transaction.getId());
+    }
+
+    @Test
+    void deveAtualizarTransacaoComSucesso() {
+        Category category = new Category(11L, "Lazer", "Categoria de Lazer", LocalDateTime.now(), LocalDateTime.now(),
+                null, true, new BigDecimal("300"), new BigDecimal("300"));
+
+        transaction.setCategory(category);
+        when(transactionRepository.findById(transaction.getId())).thenReturn(Optional.of(transaction));
+        when(categoryRepository.findById(anyLong())).thenReturn(Optional.of(category));
+        when(transactionRepository.save(transaction)).thenReturn(transaction);
+        when(transactionConverter.converterToEntityUpdate(transaction, transactionDTO)).thenReturn(transaction);
+        when(transactionConverter.converterToDTO(transaction)).thenReturn(transactionDTO);
+
+        TransactionDTO result = transactionService.updateTransaction(transaction.getId(), transactionDTO);
+
+        assertNotNull(result);
+        assertEquals(transactionDTO.transactionType(), result.transactionType());
+        verify(transactionRepository).findById(transaction.getId());
+        verify(transactionRepository).save(transaction);
+    }
+
+    @Test
+    void deveLancarExceptionAoAtualizarTransacaoNaoEncontrada() {
+        when(transactionRepository.findById(transaction.getId())).thenReturn(Optional.empty());
+
+        ValidationException exception = assertThrows(ValidationException.class, () -> {
+            transactionService.updateTransaction(transaction.getId(), transactionDTO);
+        });
+
+        assertEquals("Transação não encontrada 1", exception.getMessage());
+        verifyNoMoreInteractions(transactionRepository);
+    }
+
+    @Test
+    void deveExcluirTransacaoComSucesso() {
+        when(transactionRepository.existsById(anyLong())).thenReturn(true);
+        transactionService.deleteTransaction(transaction.getId());
+
+        verify(transactionRepository, times(1)).deleteById(transaction.getId());
+    }
+
+    @Test
+    void deveLancarExceptionAoExcluirTransacaoNaoEncontrada() {
+        when(transactionRepository.existsById(anyLong())).thenReturn(false);
+
+        ValidationException exception = assertThrows(ValidationException.class, () -> {
+            transactionService.deleteTransaction(transaction.getId());
+        });
+
+        assertEquals("Transação não encontrada: " + transaction.getId(), exception.getMessage());
+
+        verify(transactionRepository).existsById(transaction.getId());
+        verifyNoMoreInteractions(transactionRepository);
+    }
+
 
 }
 

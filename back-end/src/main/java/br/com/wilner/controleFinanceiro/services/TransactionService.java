@@ -10,7 +10,6 @@ import br.com.wilner.controleFinanceiro.services.ValidationSerice.TransactionVal
 import br.com.wilner.controleFinanceiro.util.converter.TransactionConverter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -72,13 +71,10 @@ public class TransactionService {
     }
 
     public void deleteTransaction(Long id) {
-        try {
-            transactionRepository.deleteById(id);
-        } catch (EmptyResultDataAccessException e) {
+        if (!transactionRepository.existsById(id)) {
             throw new ValidationException("Transação não encontrada: " + id);
-        } catch (Exception e) {
-            throw new ValidationException("Erro ao deletar transação: " + id, e);
         }
+        transactionRepository.deleteById(id);
     }
 
     public TransactionDTO getTransactionById(Long id) {

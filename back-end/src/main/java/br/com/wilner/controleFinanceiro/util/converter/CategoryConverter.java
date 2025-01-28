@@ -29,4 +29,10 @@ public class CategoryConverter {
                 .isActive(category.getIsActive())
                 .build();
     }
+
+    public Category converterToEntityUpdate(Category category, CategoryRequestDTO categoryDTO) {
+        return Category.builder()
+                .name(categoryDTO.name().toUpperCase())
+                .build();
+    }
 }

@@ -18,7 +18,7 @@ public class CategoryValidationService implements ValidateMandatoryFields<Catego
 
     @Override
     public void checkValidFields(Category category) {
-        if (category.getName().isEmpty()) {
+        if (category.getName().isEmpty() || category.getName() == null) {
             throw new ValidationException("O nome da categoria é obrigatório");
         }
         Optional<Category> categoryName = categoryRepository.findByNameIgnoreCase(category.getName());

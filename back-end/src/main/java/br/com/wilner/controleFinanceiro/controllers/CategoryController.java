@@ -25,7 +25,7 @@ public class CategoryController {
     @Operation(summary = "Cria um nava categoria", method = "POST")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Categoria criada com sucesso"),
-            @ApiResponse(responseCode = "500", description = "Erro ao  salvar categoria")
+            @ApiResponse(responseCode = "400", description = "Erro ao  salvar categoria")
     })
     @PostMapping("/new")
     public ResponseEntity<CategoryResponseDTO> createCategory(@Valid @RequestBody CategoryRequestDTO categoryDTO) {
@@ -63,10 +63,25 @@ public class CategoryController {
         return ResponseEntity.accepted().build();
     }
 
+    @Operation(summary = "Realiza a soma por categoria", method = "GET")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Soma realizada com sucesso"),
+            @ApiResponse(responseCode = "500", description = "Falha ao realizar soma dos valores")
+    })
     @GetMapping("/totals/{categoryName}")
     public ResponseEntity<CategoryTotals> getCategoryTotals(@PathVariable String categoryName) {
         CategoryTotals totals = categoryService.calculateTotalsForCategory(categoryName);
         return ResponseEntity.ok(totals);
+    }
+
+    @Operation(summary = "Fazer atualização de uma Categoria", method = "PATCH")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Categoria atualizada com sucesso"),
+            @ApiResponse(responseCode = "500", description = "Erro ao  realizar atualização dos dados")
+    })
+    @PatchMapping("/category-update")
+    public ResponseEntity<CategoryResponseDTO> updateCategory(@Valid @RequestParam String name, @RequestBody CategoryRequestDTO categoryDTO) {
+        return ResponseEntity.ok(categoryService.updateCategory(name, categoryDTO));
     }
 }
 

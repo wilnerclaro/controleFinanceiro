@@ -19,8 +19,7 @@ import java.time.LocalDate;
 import java.util.Collections;
 
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -74,6 +73,42 @@ class TransactionControllerTest {
 
         verify(transactionService).getTransactionsByCategoryAndDate(anyString(), any(LocalDate.class), any(LocalDate.class));
         verifyNoMoreInteractions(transactionService);
+    }
+
+    @Test
+    void deveBuscarTransacaoPorUserNameComSucesso() throws Exception {
+        when(transactionService.getTransactionsByUserName(anyString())).thenReturn(Collections.singletonList(transactionDTO));
+
+        mockMvc.perform(get(url + "/users")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .param("name", "Teste"))
+                .andExpect(status().is2xxSuccessful());
+
+        verify(transactionService).getTransactionsByUserName("Teste");
+    }
+
+    @Test
+    void deveAtualizarTransacaoComSucesso() throws Exception {
+        when(transactionService.updateTransaction(anyLong(), any(TransactionDTO.class))).thenReturn(transactionDTO);
+
+        mockMvc.perform(patch(url + "/update-transaction")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(transactionDTO))
+                        .param("id", String.valueOf(1L)))
+                .andExpect(status().is2xxSuccessful());
+
+        verify(transactionService).updateTransaction(anyLong(), any(TransactionDTO.class));
+    }
+
+    @Test
+    void deveExcluirTransacaoComSucesso() throws Exception {
+        doNothing().when(transactionService).deleteTransaction(1L);
+
+        mockMvc.perform(delete(url + "/delete")
+                        .param("id", String.valueOf(1L)))
+                .andExpect(status().is2xxSuccessful());
+
+        verify(transactionService).deleteTransaction(1L);
     }
 
 

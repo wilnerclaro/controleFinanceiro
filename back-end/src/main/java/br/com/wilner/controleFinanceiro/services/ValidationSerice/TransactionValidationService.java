@@ -12,13 +12,11 @@ public class TransactionValidationService implements ValidateMandatoryFields<Tra
 
     @Override
     public void checkValidFields(Transaction transaction) {
-        if (transaction.getTransactionType().isEmpty())
+        if (transaction.getTransactionType().isEmpty() || transaction.getTransactionType() == null)
             throw new ValidationException("Tipo da transação inexistente");
-        if (transaction.getTransactionValue() == null)
-            throw new ValidationException("Valor da transação inexistente");
         if (transaction.getTransactionDate() == null)
             throw new ValidationException("Data da transação inexistente");
-        if (transaction.getPaymentMethod().isEmpty())
+        if (transaction.getPaymentMethod().isEmpty() || transaction.getPaymentMethod() == null)
             throw new ValidationException("Forma de pagamento inexistente");
         if (transaction.getTransactionValue() == null || transaction.getTransactionValue().compareTo(BigDecimal.ZERO) < 0) {
             throw new ValidationException("O valor da transação deve ser maior ou igual a zero");

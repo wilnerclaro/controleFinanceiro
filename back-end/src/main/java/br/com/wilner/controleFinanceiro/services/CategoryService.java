@@ -80,6 +80,13 @@ public class CategoryService implements DeactivationService {
                     return new ValidationException("Categoria não encontrada ou sem transações: " + categoryName);
                 });
     }
+
+    public CategoryResponseDTO updateCategory(String name, CategoryRequestDTO categoryDTO) {
+        Category categoryName = categoryRepository.findByNameAndIsActive(name, true)
+                .orElseThrow(() -> new ValidationException("Categoria não encontrada ou não esta ativa"));
+        Category category = categoryConverter.converterToEntityUpdate(categoryName, categoryDTO);
+        return categoryConverter.converterToDTO(categoryRepository.save(category));
+    }
 }
 
 

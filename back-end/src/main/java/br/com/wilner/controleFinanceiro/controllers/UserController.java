@@ -37,7 +37,7 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "Erro ao  realizar busca dos dados")
     })
     @GetMapping("/user")
-    public ResponseEntity<UserDTO> getUserById(@RequestParam String name) {
+    public ResponseEntity<UserDTO> getUserByName(@RequestParam String name) {
         return ResponseEntity.ok(userService.getUserByName(name));
     }
 

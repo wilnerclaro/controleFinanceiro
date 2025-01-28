@@ -26,7 +26,7 @@ class TransactionValidationServiceTest {
     static Stream<Arguments> dataProvider() {
         return Stream.of(
                 Arguments.of("", BigDecimal.valueOf(100), LocalDateTime.now(), "CASH", "Tipo da transação inexistente"),
-                Arguments.of("DEPOSIT", null, LocalDateTime.now(), "CASH", "Valor da transação inexistente"),
+                Arguments.of("DEPOSIT", null, LocalDateTime.now(), "CASH", "O valor da transação deve ser maior ou igual a zero"),
                 Arguments.of("DEPOSIT", BigDecimal.valueOf(100), null, "CASH", "Data da transação inexistente"),
                 Arguments.of("DEPOSIT", BigDecimal.valueOf(100), LocalDateTime.now(), "", "Forma de pagamento inexistente")
         );

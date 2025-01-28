@@ -21,9 +21,9 @@ import java.util.Collections;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
@@ -86,10 +86,61 @@ class CategoryControllerTest {
                         .contentType(jsonRequest)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful());
-  
+
 
         verify(categoryService).calculateTotalsForCategory("Teste");
         verifyNoMoreInteractions(categoryService);
     }
+
+    @Test
+    void deveLancarErroAoCriarCategoriaComDadosInvalidos() throws Exception {
+        categoryRequestDTO = new CategoryRequestDTO("", "", null);
+
+        mockMvc.perform(post("/categories")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(categoryRequestDTO)))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    void deveRetornarCategoriaPorNome() throws Exception {
+        when(categoryService.getCategoryByName(anyString())).thenReturn(categoryResponseDTO);
+
+        mockMvc.perform(get(url + "/category")
+                        .param("name", "Casa")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$.name").value("Casa"));
+
+        verify(categoryService).getCategoryByName("Casa");
+    }
+
+    @Test
+    void deveAtualizarCategoriaComSucesso() throws Exception {
+        when(categoryService.updateCategory(anyString(), any(CategoryRequestDTO.class))).thenReturn(categoryResponseDTO);
+
+        mockMvc.perform(patch(url + "/category-update")
+                        .param("name", "Casa")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(categoryRequestDTO)))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$.name").value("Casa"));
+
+        verify(categoryService).updateCategory(anyString(), any(CategoryRequestDTO.class));
+    }
+
+    @Test
+    void deveExcluirCategoriaComSucesso() throws Exception {
+        doNothing().when(categoryService).deactivationService(anyString());
+
+        mockMvc.perform(delete(url + "/delete")
+                        .param("name", "Casa"))
+                .andExpect(status().isAccepted());
+
+        verify(categoryService).deactivationService(anyString());
+    }
+
+
 }
 

@@ -15,8 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -72,6 +71,31 @@ class UserControllerTest {
 
         verify(userService).getUserByName(anyString());
         verifyNoMoreInteractions(userService);
+    }
+
+    @Test
+    void deveAtualizarUsuarioComSucesso() throws Exception {
+        when(userService.updateUser(anyString(), any(UserDTO.class))).thenReturn(userDTO);
+
+        mockMvc.perform(patch(url + "/update")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(userDTO))
+                        .param("name", "Novo Usuario"))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$.name").value("Novo Usuario"));
+
+        verify(userService).updateUser(anyString(), any(UserDTO.class));
+    }
+
+    @Test
+    void deveExcluirUsuarioComSucesso() throws Exception {
+        doNothing().when(userService).deactivationService(anyString());
+
+        mockMvc.perform(delete(url + "/delete")
+                        .param("name", "Novo Usuario"))
+                .andExpect(status().is2xxSuccessful());
+
+        verify(userService).deactivationService("Novo Usuario");
     }
 
 

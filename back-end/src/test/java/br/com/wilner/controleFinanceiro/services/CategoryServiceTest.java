@@ -17,6 +17,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -132,6 +134,15 @@ class CategoryServiceTest {
         });
 
         assertEquals("Categoria não encontrada ", exception.getMessage());
+    }
+
+    @Test
+    void deveBuscarTodasAsCategorias() {
+        when(categoryRepository.findByIsActive(true)).thenReturn(Collections.singletonList(category));
+
+        List<CategoryResponseDTO> result = categoryService.getAllCategories();
+        assertNotNull(result);
+
     }
 
 }

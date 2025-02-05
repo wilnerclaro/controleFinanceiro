@@ -32,7 +32,10 @@ public class CategoryConverter {
 
     public Category converterToEntityUpdate(Category category, CategoryRequestDTO categoryDTO) {
         return Category.builder()
-                .name(categoryDTO.name().toUpperCase())
+                .name(categoryDTO.name().toUpperCase() != null ? categoryDTO.name() : category.getName())
+                .updateDate(LocalDateTime.now())
+                .isActive(category.getIsActive() != null ? category.getIsActive() : category.getIsActive())
+                .description(categoryDTO.description().toUpperCase() != null ? categoryDTO.description() : category.getDescription())
                 .build();
     }
 }
